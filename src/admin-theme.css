@@ -1,4 +1,4 @@
-/* El panel conserva el lenguaje visual del demo AgroVisor y añade datos reales. */
+/* El panel conserva el lenguaje visual del demo SurcoVisor y añade datos reales. */
 body:has(.workspace),
 body:has(.auth) {
   background: #f3f5ef;

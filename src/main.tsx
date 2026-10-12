@@ -43,7 +43,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
     [busy, setBusy] = useState(false);
   return (
     <main className="auth">
-      <div className="brand">◈ AgroVisor</div>
+      <div className="brand">◈ SurcoVisor</div>
       <h1>Tu campo, conectado.</h1>
       <p>
         Gestiona tu finca con información real, desde cualquier lugar de
@@ -177,7 +177,7 @@ function WorkspaceGate() {
   if (!configured)
     return (
       <main className="auth">
-        <h1>AgroVisor</h1>
+        <h1>SurcoVisor</h1>
         <h2>Conecta tu proyecto para comenzar</h2>
         <p>
           Falta configurar Supabase. Copia .env.example a .env y establece
@@ -293,8 +293,8 @@ function Workspace({ email }: { email: string }) {
     <>
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark">A<span>↗</span></span>
-          <span>agrovisor<small>EL CAMPO, EN PERSPECTIVA</small></span>
+          <span className="brand-mark">S<span>↗</span></span>
+          <span>surcovisor<small>EL CAMPO, EN PERSPECTIVA</small></span>
         </div>
         <div className="workspace-label">MI EXPLOTACIÓN</div>
         <nav>
@@ -507,7 +507,7 @@ function Workspace({ email }: { email: string }) {
         )}
         </main>
         <footer>
-          AgroVisor · Ecuador · USD · hectáreas · Información meteorológica
+          SurcoVisor · Ecuador · USD · hectáreas · Información meteorológica
           modelada y observaciones satelitales sujetas a disponibilidad.
         </footer>
       </div>
