@@ -4,7 +4,12 @@ export const supabase=configured?createClient(import.meta.env.VITE_SUPABASE_URL,
 const base=(import.meta.env.VITE_API_URL||'/api/v1').replace(/\/$/,'');
 export async function api(path:string,method='GET',body?:unknown){
  const token=(await supabase?.auth.getSession())?.data.session?.access_token;
- const r=await fetch(base+path,{method,headers:{Authorization:`Bearer ${token||''}`,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
+ let r:Response;
+ try {
+  r=await fetch(base+path,{method,headers:{Authorization:`Bearer ${token||''}`,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
+ } catch {
+  throw new Error('No se pudo conectar con el servidor. Comprueba tu conexión o que el backend esté iniciado.');
+ }
  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||e.error?.message|| (typeof e.error==='string'?e.error:null)||`Error ${r.status}`)}
  if(r.status===204)return null;return r.json();
 }

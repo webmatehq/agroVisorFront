@@ -316,14 +316,7 @@ function Workspace({ email }: { email: string }) {
             </NavLink>
           ))}
         </nav>
-        <NavLink to="/" className="return-home sidebar-home">← Ver página principal</NavLink>
         <div className="sidebar-bottom"><div className="campaign"><span className="tiny">MI ORGANIZACIÓN</span><label className="organization-picker"><span className="sr-only">Organización</span><select value={org} onChange={e=>{setOrg(e.target.value);setFarm("");setParcel("")}}><option value="">Selecciona</option>{orgs.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><span>Crecer empieza por observar.</span></div>
-        <div className="account">
-          {email}
-          <button className="ghost" onClick={() => supabase!.auth.signOut()}>
-            Cerrar sesión
-          </button>
-        </div>
         </div>
       </aside>
       <div className="app-shell">
@@ -357,7 +350,7 @@ function Workspace({ email }: { email: string }) {
               ))}
             </select>
           </label>
-          </div><div className="top-right"><span className="demo-tag">MI EXPLOTACIÓN</span><span className="today">{new Date().toLocaleDateString("es-EC",{day:"numeric",month:"short",year:"numeric"})}</span></div></header>
+          </div><div className="top-right"><span className="demo-tag">MI EXPLOTACIÓN</span><span className="today">{new Date().toLocaleDateString("es-EC",{day:"numeric",month:"short",year:"numeric"})}</span><button className="logout-button" onClick={() => supabase!.auth.signOut()} title={`Cerrar sesión de ${email}`}>Cerrar sesión</button></div></header>
         <main className="workspace">
         <ErrorBox error={me.error || farms.error || parcels.error} />
         {me.isPending ? (
