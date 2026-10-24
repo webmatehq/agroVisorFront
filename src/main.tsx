@@ -6,12 +6,14 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { HashRouter, NavLink, Route, Routes } from "react-router-dom";
+import { HashRouter, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 import { api, configured, supabase, list, exportEvents } from "./api";
 import { Dashboard } from "./Dashboard";
 import { ParcelMap } from "./Map";
 import { Fumigations } from "./Fumigations";
+import { Landing } from "./Landing";
+import "./style.css";
 
 import "./original-demo.css";
 import "./connected-layout.css";
@@ -149,6 +151,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
           </button>
         </div>
       </form>
+      <a className="return-home" href="/">← Volver a la página principal</a>
     </main>
   );
 }
@@ -199,7 +202,7 @@ function WorkspaceGate() {
 }
 function NavGlyph({ to }: { to: string }) {
   const paths: Record<string, React.ReactNode> = {
-    "/": (
+    "/admin": (
       <>
         <rect x="3" y="3" width="7" height="7" rx="1" />
         <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -299,7 +302,7 @@ function Workspace({ email }: { email: string }) {
         <div className="workspace-label">MI EXPLOTACIÓN</div>
         <nav>
           {[
-            ["/", "Vista general"],
+            ["/admin", "Vista general"],
             ["/fincas", "Fincas y parcelas"],
             ["/campanas", "Campañas"],
             ["/cuaderno", "Cuaderno de campo"],
@@ -307,12 +310,13 @@ function Workspace({ email }: { email: string }) {
             ["/ndvi", "Desarrollo"],
             ["/fumigaciones", "Fumigaciones"],
           ].map(([to, label]) => (
-            <NavLink className={({isActive}) => "nav-item" + (isActive ? " active" : "")} end={to === "/"} key={to} to={to}>
+            <NavLink className={({isActive}) => "nav-item" + (isActive ? " active" : "")} end={to === "/admin"} key={to} to={to}>
               <NavGlyph to={to} />
               <span>{label}</span>
             </NavLink>
           ))}
         </nav>
+        <NavLink to="/" className="return-home sidebar-home">← Ver página principal</NavLink>
         <div className="sidebar-bottom"><div className="campaign"><span className="tiny">MI ORGANIZACIÓN</span><label className="organization-picker"><span className="sr-only">Organización</span><select value={org} onChange={e=>{setOrg(e.target.value);setFarm("");setParcel("")}}><option value="">Selecciona</option>{orgs.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><span>Crecer empieza por observar.</span></div>
         <div className="account">
           {email}
@@ -375,7 +379,7 @@ function Workspace({ email }: { email: string }) {
         ) : (
           <Routes>
             <Route
-              path="/"
+              path="/admin"
               element={
                 <Dashboard
                   farm={f}
@@ -1305,7 +1309,14 @@ function Ndvi({
     </section>
   );
 }
-function App() { return <WorkspaceGate />; }
+function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const recovery = new URLSearchParams(window.location.search).has("recovery");
+  return location.pathname === "/" && !recovery
+    ? <Landing onLogin={() => navigate("/admin")} />
+    : <WorkspaceGate />;
+}
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
