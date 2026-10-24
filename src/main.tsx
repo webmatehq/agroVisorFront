@@ -49,7 +49,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
       <h1>Tu campo, conectado.</h1>
       <p>
         Gestiona tu finca con información real, desde cualquier lugar de
-        Ecuador.
+        mundo.
       </p>
       <form
         onSubmit={async (e) => {
@@ -325,7 +325,7 @@ function Workspace({ email }: { email: string }) {
         <div className="top-right"><span className="user-label"><span className="user-avatar">{email.charAt(0).toUpperCase()}</span><span>{email}</span></span><span className="today">{new Date().toLocaleDateString("es-EC", { day: "numeric", month: "short", year: "numeric" })}</span><button className="logout-button" onClick={() => supabase!.auth.signOut()} title={`Cerrar sesión de ${email}`}>Cerrar sesión</button></div>
       </header>
       <main className="workspace module-workspace"><ModuleHub /></main>
-      <footer>SurcoVisor · Ecuador · USD · hectáreas · Información meteorológica modelada y observaciones satelitales sujetas a disponibilidad.</footer>
+      <footer>SurcoVisor · USD · hectáreas · Información meteorológica modelada y observaciones satelitales sujetas a disponibilidad.</footer>
     </div>
   );
   return (
@@ -538,7 +538,7 @@ function Workspace({ email }: { email: string }) {
         )}
         </main>
         <footer>
-          SurcoVisor · Ecuador · USD · hectáreas · Información meteorológica
+          SurcoVisor · USD · hectáreas · Información meteorológica
           modelada y observaciones satelitales sujetas a disponibilidad.
         </footer>
       </div>
