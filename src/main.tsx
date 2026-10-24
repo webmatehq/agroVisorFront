@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { HashRouter, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 import { api, configured, supabase, list, exportEvents } from "./api";
 import { Dashboard } from "./Dashboard";
@@ -261,7 +261,21 @@ function NavGlyph({ to }: { to: string }) {
     </span>
   );
 }
+function ModuleHub() {
+  const modules = [
+    { to: "/admin", title: "Notebook", text: "Consulta el estado de tus organizaciones, fincas, parcelas y observaciones.", icon: "/cuaderno" },
+    { to: "/gestion", title: "Organizaciones y parcelas", text: "Crea y administra tus organizaciones, fincas y parcelas.", icon: "/fincas" },
+    { to: "/fumigaciones/solicitar", title: "Fumigaciones", text: "Consulta tus parcelas y gestiona solicitudes e historial de aplicaciones.", icon: "/fumigaciones" },
+  ];
+  return <section className="module-hub">
+    <div className="module-heading"><p className="eyebrow">CENTRO DE CONTROL</p><h1>Aplicaciones</h1><p className="subtitle">Accede a todos los módulos y herramientas de tu explotación desde aquí.</p></div>
+    <div className="module-grid">{modules.map((module) => <article className="module-card" key={module.to}>
+      <div className="module-icon"><NavGlyph to={module.icon} /></div><h2>{module.title}</h2><p>{module.text}</p><NavLink className="button" to={module.to}>Abrir módulo <span aria-hidden="true">→</span></NavLink>
+    </article>)}</div>
+  </section>;
+}
 function Workspace({ email }: { email: string }) {
+  const location = useLocation();
   const q = useQueryClient();
   const me = useQuery({ queryKey: ["me"], queryFn: () => api("/me") });
   const [org, setOrg] = useState(""),
@@ -292,6 +306,24 @@ function Workspace({ email }: { email: string }) {
   const refresh = () => q.invalidateQueries();
   const role = list(me.data?.memberships).find((x) => x.organization_id === org)?.role;
   const writable = role === "owner" || role === "editor";
+  const isApps = location.pathname === "/apps";
+  const isFumigations = location.pathname.startsWith("/fumigaciones");
+  const isManagement = location.pathname.startsWith("/gestion");
+  const navLinks: [string, string][] = isFumigations
+    ? [["/fumigaciones/solicitar", "Solicitar"], ["/fumigaciones/historial", "Historial"]]
+    : isManagement
+      ? [["/gestion", "Organizaciones y parcelas"]]
+      : [["/admin", "Vista general"], ["/cuaderno", "Cuaderno de campo"], ["/clima", "Meteorología"], ["/ndvi", "Desarrollo"]];
+  if (isApps) return (
+    <div className="module-shell">
+      <header className="module-topbar">
+        <div className="brand"><span className="brand-mark">S<span>↗</span></span><span>surcovisor<small>EL CAMPO, EN PERSPECTIVA</small></span></div>
+        <div className="top-right"><span className="user-label"><span className="user-avatar">{email.charAt(0).toUpperCase()}</span><span>{email}</span></span><span className="today">{new Date().toLocaleDateString("es-EC", { day: "numeric", month: "short", year: "numeric" })}</span><button className="logout-button" onClick={() => supabase!.auth.signOut()} title={`Cerrar sesión de ${email}`}>Cerrar sesión</button></div>
+      </header>
+      <main className="workspace module-workspace"><ModuleHub /></main>
+      <footer>SurcoVisor · Ecuador · USD · hectáreas · Información meteorológica modelada y observaciones satelitales sujetas a disponibilidad.</footer>
+    </div>
+  );
   return (
     <>
       <aside className="sidebar">
@@ -299,19 +331,12 @@ function Workspace({ email }: { email: string }) {
           <span className="brand-mark">S<span>↗</span></span>
           <span>surcovisor<small>EL CAMPO, EN PERSPECTIVA</small></span>
         </div>
-        <div className="workspace-label">MI EXPLOTACIÓN</div>
+        <div className="workspace-label">{isFumigations ? "FUMIGACIONES" : isManagement ? "GESTIÓN" : "NOTEBOOK"}</div>
         <nav>
-          {[
-            ["/admin", "Vista general"],
-            ["/fincas", "Fincas y parcelas"],
-            ["/campanas", "Campañas"],
-            ["/cuaderno", "Cuaderno de campo"],
-            ["/clima", "Meteorología"],
-            ["/ndvi", "Desarrollo"],
-            ["/fumigaciones", "Fumigaciones"],
-          ].map(([to, label]) => (
+          {!isApps && <NavLink className="nav-item module-back" to="/apps"><span className="nav-icon" aria-hidden="true">←</span><span>Módulos</span></NavLink>}
+          {navLinks.map(([to, label]) => (
             <NavLink className={({isActive}) => "nav-item" + (isActive ? " active" : "")} end={to === "/admin"} key={to} to={to}>
-              <NavGlyph to={to} />
+              <NavGlyph to={to === "/gestion" ? "/fincas" : to.startsWith("/fumigaciones") ? "/fumigaciones" : to} />
               <span>{label}</span>
             </NavLink>
           ))}
@@ -355,19 +380,11 @@ function Workspace({ email }: { email: string }) {
         <ErrorBox error={me.error || farms.error || parcels.error} />
         {me.isPending ? (
           <p>Cargando organizaciones…</p>
-        ) : !org ? (
+        ) : !org && !isManagement ? (
           <section className="card">
-            <h2>Empecemos por tu explotación</h2>
-            <p>Crea tu organización y después registra tu primera finca.</p>
-            <SaveForm
-              onSave={async (b) => {
-                const r = await api("/organizations", "POST", b);
-                setOrg(r.id);
-                await refresh();
-              }}
-            >
-              <Field label="Nombre de organización" name="name" required />
-            </SaveForm>
+            <h2>Aún no hay una organización creada</h2>
+            <p>Accede a Gestión para crear tu organización y registrar tus parcelas.</p>
+            <NavLink className="button" to="/gestion">Ir a Gestión</NavLink>
           </section>
         ) : (
           <Routes>
@@ -384,9 +401,22 @@ function Workspace({ email }: { email: string }) {
               }
             />
             <Route
-              path="/fincas"
+              path="/gestion"
               element={
-                <>
+                !org ? <section className="card">
+                  <h2>Empecemos por tu explotación</h2>
+                  <p>Crea tu organización y después registra tu primera finca.</p>
+                  <SaveForm onSave={async (b) => { const r = await api("/organizations", "POST", b); setOrg(r.id); await refresh(); }}>
+                    <Field label="Nombre de organización" name="name" required />
+                  </SaveForm>
+                </section> : <>
+                  <section className="card">
+                    <h2>Organizaciones</h2>
+                    <p>Crea una nueva organización para administrar sus fincas y parcelas.</p>
+                    <SaveForm onSave={async (b) => { const r = await api("/organizations", "POST", b); setOrg(r.id); setFarm(""); setParcel(""); await refresh(); }}>
+                      <Field label="Nombre de organización" name="name" required />
+                    </SaveForm>
+                  </section>
                   <section className="card">
                     <h2>Fincas</h2>
                     {writable && (
@@ -486,7 +516,7 @@ function Workspace({ email }: { email: string }) {
               }
             />
             <Route
-              path="/fumigaciones"
+              path="/fumigaciones/*"
               element={
                 <Fumigations
                   organizationId={org}
@@ -513,9 +543,11 @@ function Workspace({ email }: { email: string }) {
 }
 function SaveForm({
   children,
+  secondaryAction,
   onSave,
 }: {
   children: React.ReactNode;
+  secondaryAction?: React.ReactNode;
   onSave: (data: Record<string, any>) => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false),
@@ -542,6 +574,7 @@ function SaveForm({
       {children}
       <div className="form-actions">
         <button disabled={busy}>{busy ? "Guardando…" : "Guardar"}</button>
+        {secondaryAction}
         {ok && <span role="status">Guardado correctamente</span>}
         <ErrorBox error={error} />
       </div>
@@ -562,39 +595,39 @@ function ParcelEditor({
   saved: (id: string) => Promise<void>;
 }) {
   const [geometry, setGeometry] = useState<any>(null),
-    [edit, setEdit] = useState(false);
+    [edit, setEdit] = useState(false),
+    [showExisting, setShowExisting] = useState(true);
   useEffect(() => {
     setEdit(false);
     setGeometry(null);
+    setShowExisting(true);
   }, [parcel?.id, farm]);
   return (
     <section className="card">
       <h2>Parcelas</h2>
-      <p>
-        Dibuja el contorno o importa un archivo GeoJSON. La superficie se
-        calcula en el servidor.
-      </p>
+      <p>Dibuja el contorno de la parcela. La superficie se calcula en el servidor.</p>
       {writable && parcel && (
         <button
           className="ghost"
           onClick={() => {
             setEdit(!edit);
             setGeometry(!edit ? parcel.geometry_geojson : null);
+            setShowExisting(!edit);
           }}
         >
-          {edit ? "Crear nueva parcela" : "Editar parcela seleccionada"}
+          {edit ? "Dibujar nueva parcela" : "Editar parcela seleccionada"}
         </button>
       )}
       <ParcelMap
-        geometry={geometry || parcel?.geometry_geojson}
+        geometry={showExisting ? (geometry || parcel?.geometry_geojson) : geometry}
         onChange={writable ? setGeometry : undefined}
+        onDrawingStart={() => setShowExisting(false)}
       />
       {writable && (
         <SaveForm
           key={String(edit) + parcel?.id}
           onSave={async (b) => {
-            if (!geometry)
-              throw Error("Dibuja o importa el contorno antes de guardar");
+            if (!geometry) throw Error("Dibuja el contorno antes de guardar");
             const r = await api(
               "/parcels" + (edit ? "/" + parcel.id : ""),
               edit ? "PATCH" : "POST",
@@ -761,6 +794,15 @@ function Records({
               )}
               <SaveForm
                 key={edit?.id || "new"}
+                secondaryAction={
+                  <button
+                    type="button"
+                    className="ghost"
+                    onClick={() => edit ? setEdit(null) : setFormOpen(false)}
+                  >
+                    {edit ? "Cancelar edición" : "Cancelar"}
+                  </button>
+                }
                 onSave={async (b) => {
                   const body: any = { ...b };
                   for (const key of Object.keys(body))
@@ -877,20 +919,6 @@ function Records({
                   </>
                 )}
               </SaveForm>
-              {edit && (
-                <button className="ghost" onClick={() => setEdit(null)}>
-                  Cancelar edición
-                </button>
-              )}
-              {!edit && (
-                <button
-                  type="button"
-                  className="ghost"
-                  onClick={() => setFormOpen(false)}
-                >
-                  Cancelar
-                </button>
-              )}
             </div>
           </dialog>
         )}
@@ -1307,15 +1335,15 @@ function App() {
   const navigate = useNavigate();
   const recovery = new URLSearchParams(window.location.search).has("recovery");
   return location.pathname === "/" && !recovery
-    ? <Landing onLogin={() => navigate("/admin")} />
+    ? <Landing onLogin={() => navigate("/apps")} />
     : <WorkspaceGate />;
 }
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      <HashRouter>
+      <BrowserRouter>
         <App />
-      </HashRouter>
+      </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,
 );
