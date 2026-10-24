@@ -263,9 +263,10 @@ function NavGlyph({ to }: { to: string }) {
 }
 function ModuleHub() {
   const modules = [
-    { to: "/admin", title: "Notebook", text: "Consulta el estado de tus organizaciones, fincas, parcelas y observaciones.", icon: "/cuaderno" },
+    { to: "/admin", title: "Índices", text: "Consulta los índices y observaciones disponibles de tus parcelas.", icon: "/ndvi" },
+    { to: "/cuaderno", title: "Notebook", text: "Registra cualquier actividad, observación o labor realizada en el campo.", icon: "/cuaderno" },
     { to: "/gestion", title: "Organizaciones y parcelas", text: "Crea y administra tus organizaciones, fincas y parcelas.", icon: "/fincas" },
-    { to: "/fumigaciones/solicitar", title: "Fumigaciones", text: "Consulta tus parcelas y gestiona solicitudes e historial de aplicaciones.", icon: "/fumigaciones" },
+    { to: "/servicios/solicitar", title: "Servicios", text: "Consulta tus parcelas, solicita fumigaciones y revisa el historial de servicios.", icon: "/fumigaciones" },
   ];
   return <section className="module-hub">
     <div className="module-heading"><p className="eyebrow">CENTRO DE CONTROL</p><h1>Aplicaciones</h1><p className="subtitle">Accede a todos los módulos y herramientas de tu explotación desde aquí.</p></div>
@@ -307,13 +308,16 @@ function Workspace({ email }: { email: string }) {
   const role = list(me.data?.memberships).find((x) => x.organization_id === org)?.role;
   const writable = role === "owner" || role === "editor";
   const isApps = location.pathname === "/apps";
-  const isFumigations = location.pathname.startsWith("/fumigaciones");
+  const isServices = location.pathname.startsWith("/servicios");
   const isManagement = location.pathname.startsWith("/gestion");
-  const navLinks: [string, string][] = isFumigations
-    ? [["/fumigaciones/solicitar", "Solicitar"], ["/fumigaciones/historial", "Historial"]]
+  const isNotebook = location.pathname.startsWith("/cuaderno");
+  const navLinks: [string, string][] = isServices
+    ? [["/servicios/solicitar", "Solicitar"], ["/servicios/historial", "Historial"]]
     : isManagement
       ? [["/gestion", "Organizaciones y parcelas"]]
-      : [["/admin", "Vista general"], ["/cuaderno", "Cuaderno de campo"], ["/clima", "Meteorología"], ["/ndvi", "Desarrollo"]];
+      : isNotebook
+        ? [["/cuaderno", "Registrar actividad"]]
+        : [["/admin", "Vista general"], ["/clima", "Meteorología"], ["/ndvi", "Desarrollo"]];
   if (isApps) return (
     <div className="module-shell">
       <header className="module-topbar">
@@ -331,12 +335,12 @@ function Workspace({ email }: { email: string }) {
           <span className="brand-mark">S<span>↗</span></span>
           <span>surcovisor<small>EL CAMPO, EN PERSPECTIVA</small></span>
         </div>
-        <div className="workspace-label">{isFumigations ? "FUMIGACIONES" : isManagement ? "GESTIÓN" : "NOTEBOOK"}</div>
+        <div className="workspace-label">{isServices ? "SERVICIOS" : isManagement ? "GESTIÓN" : isNotebook ? "NOTEBOOK" : "ÍNDICES"}</div>
         <nav>
           {!isApps && <NavLink className="nav-item module-back" to="/apps"><span className="nav-icon" aria-hidden="true">←</span><span>Módulos</span></NavLink>}
           {navLinks.map(([to, label]) => (
             <NavLink className={({isActive}) => "nav-item" + (isActive ? " active" : "")} end={to === "/admin"} key={to} to={to}>
-              <NavGlyph to={to === "/gestion" ? "/fincas" : to.startsWith("/fumigaciones") ? "/fumigaciones" : to} />
+              <NavGlyph to={to === "/gestion" ? "/fincas" : to.startsWith("/servicios") ? "/fumigaciones" : to} />
               <span>{label}</span>
             </NavLink>
           ))}
@@ -516,7 +520,7 @@ function Workspace({ email }: { email: string }) {
               }
             />
             <Route
-              path="/fumigaciones/*"
+              path="/servicios/*"
               element={
                 <Fumigations
                   organizationId={org}
@@ -651,6 +655,15 @@ function ParcelEditor({
     </section>
   );
 }
+const laborTypes = [
+  ["irrigation", "Riego"],
+  ["fertilization", "Fertilización"],
+  ["treatment", "Tratamiento"],
+  ["treatment", "Fumigación"],
+  ["inspection", "Inspección"],
+  ["harvest", "Cosecha"],
+  ["note", "Nota"],
+] as const;
 function Records({
   kind,
   org,
@@ -753,15 +766,8 @@ function Records({
                 onChange={(e) => setFilter(e.target.value)}
               >
                 <option value="">Todas</option>
-                {[
-                  "riego",
-                  "fertilizacion",
-                  "tratamiento",
-                  "inspeccion",
-                  "cosecha",
-                  "nota",
-                ].map((x) => (
-                  <option key={x}>{x}</option>
+                {laborTypes.map(([value, label]) => (
+                  <option key={value + label} value={value}>{label}</option>
                 ))}
               </select>
             </label>
@@ -868,15 +874,8 @@ function Records({
                     <label>
                       Tipo de labor
                       <select name="type" defaultValue={edit?.type}>
-                        {[
-                          "riego",
-                          "fertilizacion",
-                          "tratamiento",
-                          "inspeccion",
-                          "cosecha",
-                          "nota",
-                        ].map((x) => (
-                          <option key={x}>{x}</option>
+                        {laborTypes.map(([value, label]) => (
+                          <option key={value + label} value={value}>{label}</option>
                         ))}
                       </select>
                     </label>

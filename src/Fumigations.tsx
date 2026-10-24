@@ -1,36 +1,22 @@
-import {useEffect, useMemo, useState} from 'react';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {api, list} from './api';
-import {ParcelMap} from './Map';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
+import { api, list } from "./api";
 
-type Props={organizationId:string;farmId:string;farmName?:string;parcelId:string;parcelName?:string;geometry?:any;writable:boolean};
+type Props = { organizationId: string; farmId: string; farmName?: string; parcelId: string; parcelName?: string; geometry?: any; writable: boolean };
+export function Fumigations({ farmId, farmName, parcelId, parcelName }: Props) {
+  const location = useLocation();
+  const isHistory = location.pathname.endsWith("/historial");
+  const events = useQuery({ queryKey: ["services", parcelId], queryFn: () => api(`/events?parcel_id=${parcelId}&limit=100`), enabled: !!parcelId });
+  const rows = useMemo(() => list(events.data).filter(x => x.type === "treatment").sort((a, b) => String(b.event_date).localeCompare(String(a.event_date))), [events.data]);
+  const last = rows[0], previous = rows[1];
+  const whatsappMessage = encodeURIComponent(`Hola, quiero solicitar un servicio para la parcela ${parcelName || parcelId} de la finca ${farmName || farmId}.`);
 
-function Field({label,...props}:React.InputHTMLAttributes<HTMLInputElement>&{label:string}){return <label>{label}<input {...props}/></label>}
-
-export function Fumigations({organizationId,farmId,farmName,parcelId,parcelName,geometry,writable}:Props){
- const q=useQueryClient();
- const [error,setError]=useState('');
- const events=useQuery({queryKey:['fumigations',parcelId],queryFn:()=>api(`/events?parcel_id=${parcelId}&limit=100`),enabled:!!parcelId});
- const ndvi=useQuery({queryKey:['ndvi',parcelId],queryFn:()=>api(`/parcels/${parcelId}/ndvi`),enabled:!!parcelId});
- const [jobId,setJobId]=useState('');
- const job=useQuery({queryKey:['fumigation-ndvi-job',jobId],queryFn:()=>api(`/jobs/${jobId}`),enabled:!!jobId,refetchInterval:(query)=>{const status=query.state.data?.status;return jobId&&status!=='completed'&&status!=='failed'?3000:false}});
- useEffect(()=>{if(job.data?.status==='completed'){setJobId('');q.invalidateQueries({queryKey:['ndvi',parcelId]})}if(job.data?.status==='failed'){setError(job.data.last_error||'No se pudo procesar la imagen satelital');setJobId('')}},[job.data?.status,job.data?.last_error,parcelId,q]);
- const rows=useMemo(()=>list(events.data).filter(x=>x.type==='treatment').sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date))),[events.data]);
- const last=rows[0];
- const previous=rows[1];
- const satelliteObservations=useMemo(()=>{const byDate=new Map<string,any>();for(const item of list(ndvi.data).sort((a,b)=>Number(String(b.processing_version||'').includes('rgb-ndvi'))-Number(String(a.processing_version||'').includes('rgb-ndvi')))){const key=String(item.to_date);if(!byDate.has(key))byDate.set(key,item)}return [...byDate.values()].sort((a,b)=>String(b.to_date).localeCompare(String(a.to_date))).slice(0,2)},[ndvi.data]);
- const [selectedSatellite,setSelectedSatellite]=useState(''); const [mapMode,setMapMode]=useState<'rgb'|'ndvi'>('rgb');
- const observation=satelliteObservations.find(x=>x.id===selectedSatellite)||satelliteObservations[0];
- useEffect(()=>{if(!satelliteObservations.some(x=>x.id===selectedSatellite))setSelectedSatellite(satelliteObservations[0]?.id||'')},[satelliteObservations,selectedSatellite]);
- const [form,setForm]=useState({event_date:new Date().toISOString().slice(0,10),product:'',dose:'',unit:'',notes:''});
- async function save(e:React.FormEvent){e.preventDefault();setError('');try{await api('/events','POST',{organization_id:organizationId,parcel_id:parcelId,type:'treatment',event_date:form.event_date,product:form.product||null,dose:form.dose===''?null:Number(form.dose),unit:form.unit||null,notes:form.notes});setForm({...form,product:'',dose:'',unit:'',notes:''});await q.invalidateQueries({queryKey:['fumigations',parcelId]});}catch(e){setError((e as Error).message)}}
- async function refreshSatellite(){setError('');try{const result=await api(`/parcels/${parcelId}/ndvi/refresh`,'POST',{});setJobId(result.id)}catch(e){setError((e as Error).message)}}
- if(!parcelId)return <section className="card"><h2>Fumigaciones</h2><p>Selecciona una finca y una parcela para consultar sus aplicaciones.</p></section>;
- return <section className="card"><h2>Fumigaciones</h2><p><strong>Finca:</strong> {farmName||farmId} · <strong>Parcela:</strong> {parcelName||parcelId}</p><div className="toolbar"><button className="ghost" disabled={!ndvi.data?.configured||!!jobId} onClick={refreshSatellite}>{jobId?'Procesando imagen…':'Actualizar imagen satelital'}</button>{job.data&&<span role="status">{job.data.status}</span>}</div>{ndvi.data?.configured===false&&<p className="notice">Configura Copernicus en el backend para activar la imagen satelital.</p>}<div className="toolbar"><label>Modo de imagen<select value={mapMode} onChange={e=>setMapMode(e.target.value as 'rgb'|'ndvi')}><option value="rgb">Satélite RGB</option><option value="ndvi">NDVI</option></select></label></div>{satelliteObservations.length>0&&<label>Comparar imagen<select value={observation?.id||''} onChange={e=>setSelectedSatellite(e.target.value)}>{satelliteObservations.map((x,i)=><option key={x.id} value={x.id}>{i===0?'Última':'Penúltima'} · {x.from_date} — {x.to_date} · {x.quality}</option>)}</select></label>}<ParcelMap geometry={geometry} overlay={((mapMode==='ndvi'?observation?.ndvi_raster_url:observation?.raster_url))&&observation.bounds?{url:(mapMode==='ndvi'?observation.ndvi_raster_url:observation.raster_url),bounds:[[observation.bounds[1],observation.bounds[0]],[observation.bounds[3],observation.bounds[2]]]}:undefined}/>{!observation&&<p className="empty">Todavía no hay observaciones procesadas. Pulsa “Actualizar imagen satelital”.</p>}{observation&&!((mapMode==='ndvi'?observation.ndvi_raster_url:observation.raster_url))&&<p className="notice">Esta observación existe, pero su imagen fue eliminada del almacenamiento. Pulsa “Actualizar imagen satelital” para regenerarla.</p>}
-  <div className="stats"><div><strong>{rows.length}</strong><small>Aplicaciones registradas</small></div><div><strong>{last?.event_date||'—'}</strong><small>Última aplicación</small></div><div><strong>{last?.product||'—'}</strong><small>Último producto aplicado</small></div></div>
-  <div className="comparison"><article><h3>Antes</h3><p>{previous?`${previous.event_date} · ${previous.product||'Producto no indicado'}${previous.dose!=null?` · ${previous.dose} ${previous.unit||''}`:''}`:'No existe una aplicación anterior registrada.'}</p></article><article><h3>Hoy / estado actual</h3><p>{last?`${last.event_date} · ${last.product||'Producto no indicado'}${last.dose!=null?` · ${last.dose} ${last.unit||''}`:''}`:'Todavía no hay fumigaciones registradas.'}</p></article></div>
-  <p className="notice">Pendiente de registrar: próxima aplicación, producto y observación. SurcoVisor no inventa una fecha agronómica; registra la que indique el responsable de la finca.</p>
-  {writable&&<form className="form-grid" onSubmit={save}><h3>Registrar fumigación</h3><Field label="Día" type="date" value={form.event_date} onChange={e=>setForm({...form,event_date:e.target.value})} required/><Field label="Qué se aplicó" value={form.product} onChange={e=>setForm({...form,product:e.target.value})} placeholder="Producto o tratamiento" required/><Field label="Cantidad" type="number" min="0" step="any" value={form.dose} onChange={e=>setForm({...form,dose:e.target.value})}/><Field label="Unidad" value={form.unit} onChange={e=>setForm({...form,unit:e.target.value})} placeholder="L/ha, kg/ha…"/><label>Observaciones<textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></label><button>Guardar fumigación</button></form>}
-  {error&&<p role="alert" className="error">{error}</p>}
-  <h3>Historial de aplicaciones</h3>{events.isPending?<p>Cargando…</p>:rows.length?<div className="table-scroll"><table><thead><tr><th>Día</th><th>Producto</th><th>Cantidad</th><th>Observaciones</th></tr></thead><tbody>{rows.map(x=><tr key={x.id}><td>{x.event_date}</td><td>{x.product||'—'}</td><td>{x.dose??'—'} {x.unit||''}</td><td>{x.notes||'—'}</td></tr>)}</tbody></table></div>:<p className="empty">No hay fumigaciones registradas para esta parcela.</p>}</section>;
+  if (!parcelId) return <section className="card"><h2>Servicios</h2><p>Selecciona una finca y una parcela para consultar o solicitar servicios.</p></section>;
+  return <section className="card"><h2>Servicios</h2><p><strong>Finca:</strong> {farmName || farmId} · <strong>Parcela:</strong> {parcelName || parcelId}</p>
+    {!isHistory && <><p>Solicita una fumigación o un servicio de abono directamente por WhatsApp.</p><a className="button service-whatsapp" href={`https://wa.me/34617435449?text=${whatsappMessage}`} target="_blank" rel="noreferrer">Solicitar por WhatsApp ↗</a>
+      <div className="stats"><div><strong>{rows.length}</strong><small>Servicios registrados</small></div><div><strong>{last?.event_date || "—"}</strong><small>Último servicio</small></div><div><strong>{last?.product || "—"}</strong><small>Último servicio realizado</small></div></div>
+      <div className="comparison"><article><h3>Servicio anterior</h3><p>{previous ? `${previous.event_date} · ${previous.product || "Servicio no indicado"}` : "No existe un servicio anterior registrado."}</p></article><article><h3>Servicio más reciente</h3><p>{last ? `${last.event_date} · ${last.product || "Servicio no indicado"}` : "Todavía no hay servicios registrados."}</p></article></div>
+    </>}
+    <h3>Historial de servicios</h3>{events.isPending ? <p>Cargando…</p> : rows.length ? <div className="table-scroll"><table><thead><tr><th>Día</th><th>Servicio</th><th>Cantidad</th><th>Unidad</th><th>Observaciones</th></tr></thead><tbody>{rows.map(x => <tr key={x.id}><td>{x.event_date}</td><td>{x.product || "Fumigación"}</td><td>{x.dose ?? "—"}</td><td>{x.unit || "—"}</td><td>{x.notes || "—"}</td></tr>)}</tbody></table></div> : <p className="empty">No hay servicios registrados para esta parcela.</p>}</section>;
 }
