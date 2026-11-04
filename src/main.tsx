@@ -527,7 +527,7 @@ function Workspace({ email }: { email: string }) {
                 />
               }
             />
-            <Route path="/clima" element={<Weather farm={farm} />} />
+            <Route path="/clima" element={<Weather parcel={parcel} />} />
             <Route
               path="/ndvi"
               element={
@@ -1098,13 +1098,13 @@ function Photos({ event, writable }: { event: string; writable: boolean }) {
     </details>
   );
 }
-function Weather({ farm }: { farm: string }) {
+function Weather({ parcel }: { parcel: string }) {
   const r = useQuery({
-    queryKey: ["weather", farm],
-    queryFn: () => api(`/farms/${farm}/weather`),
-    enabled: !!farm,
+    queryKey: ["weather", parcel],
+    queryFn: () => api(`/parcels/${parcel}/weather`),
+    enabled: !!parcel,
   });
-  if (!farm) return <section className="card">Selecciona una finca.</section>;
+  if (!parcel) return <section className="card">Selecciona una parcela.</section>;
   const snapshot = r.data?.data,
     data = snapshot?.payload,
     daily = data?.daily;
