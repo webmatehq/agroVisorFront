@@ -11,6 +11,11 @@ button:not(.nav-item):not(.segmented button):not(.icon-btn):not(.text-button){bo
 .module-shell{min-height:100vh;background:var(--bg)}.module-topbar{height:90px;background:#fff;border-bottom:1px solid var(--line);padding:0 38px;display:flex;justify-content:space-between;align-items:center;gap:20px}.module-topbar .brand{color:var(--ink)}.module-topbar .brand-mark{color:var(--green)}.module-workspace{min-height:calc(100vh - 155px)}.module-shell>footer{margin:0}@media(max-width:700px){.module-topbar{height:76px;padding:0 19px}.module-topbar .brand{font-size:23px}.module-topbar .brand-mark{font-size:32px}.module-topbar .today{display:none}.module-workspace{min-height:calc(100vh - 141px)}}
 .user-label{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;max-width:240px}.user-label>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-avatar{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:var(--lime);color:var(--forest);font-size:13px;font-weight:700;text-transform:uppercase}@media(max-width:700px){.user-label>span:last-child{display:none}.user-label{gap:0}.user-avatar{width:28px;height:28px;flex-basis:28px}.module-topbar .top-right{gap:9px}}
 .leaflet-container.drawing-mode,.leaflet-container.drawing-mode .leaflet-interactive{cursor:crosshair!important}
+
+/* El mapa de parcelas debe quedar contenido dentro de su tarjeta. */
+.workspace>.card:not(.dashboard-map)>.parcel-map-shell{height:370px;min-height:0;max-height:370px;overflow:hidden}
+.workspace>.card:not(.dashboard-map)>.parcel-map-shell>.map{height:370px!important;min-height:370px;max-height:370px;margin:0}
+@media(max-width:700px){.workspace>.card:not(.dashboard-map)>.parcel-map-shell{height:335px;max-height:335px}.workspace>.card:not(.dashboard-map)>.parcel-map-shell>.map{height:335px!important;min-height:335px;max-height:335px}}
 .service-whatsapp{margin:4px 0 20px}
 .service-form{grid-template-columns:1fr;gap:16px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}.service-form h3,.service-form label,.service-form button{grid-column:1}.service-form button{width:100%;padding:12px 17px}
 /* Acceso a la página pública conservando el diseño del panel. */
