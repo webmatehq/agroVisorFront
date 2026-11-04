@@ -631,6 +631,11 @@ function ParcelEditor({
     <section className="card">
       <h2>{edit ? "Parcela seleccionada" : "Nueva parcela"}</h2>
       <p>{edit ? "Edita los datos y el contorno de la parcela seleccionada." : "Dibuja el contorno de una nueva parcela. La superficie se calcula en el servidor."}</p>
+      {edit && parcel?.latitude != null && parcel?.longitude != null && (
+        <p className="parcel-coordinates">
+          Coordenadas calculadas del contorno: {Number(parcel.latitude).toFixed(6)}, {Number(parcel.longitude).toFixed(6)}
+        </p>
+      )}
       {writable && parcel && (
         <button
           className="ghost"
