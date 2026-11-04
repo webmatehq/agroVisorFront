@@ -1243,7 +1243,13 @@ function Ndvi({
               const j = await api(
                 `/parcels/${parcel}/ndvi/refresh`,
                 "POST",
-                {},
+                (() => {
+                  const to = new Date().toISOString().slice(0, 10);
+                  const from = new Date(Date.now() - 2 * 86400000)
+                    .toISOString()
+                    .slice(0, 10);
+                  return { from_date: from, to_date: to };
+                })(),
               );
               setJobId(j.id);
             } catch (e) {
@@ -1251,7 +1257,7 @@ function Ndvi({
             }
           }}
         >
-          Actualizar últimos 90 días
+          Actualizar últimos 2 días
         </button>
       )}
       {job.data && (
