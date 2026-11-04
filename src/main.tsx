@@ -283,7 +283,7 @@ function Workspace({ email }: { email: string }) {
     [farm, setFarm] = useState(""),
     [parcel, setParcel] = useState(""),
     [creatingOrg, setCreatingOrg] = useState(false),
-    [creatingFarmParcel, setCreatingFarmParcel] = useState(false);
+    [creatingFarm, setCreatingFarm] = useState(false);
   const orgs = list(me.data?.organizations);
   const selectedOrg = orgs.find((x) => x.id === org);
   useEffect(() => {
@@ -431,31 +431,27 @@ function Workspace({ email }: { email: string }) {
                       <button type="button" className="ghost" onClick={() => setCreatingOrg(!creatingOrg)}>{creatingOrg ? "Cancelar" : "Crear nueva organización"}</button>
                     </SaveForm>
                   </section>
-                  {creatingFarmParcel ? <NewFarmParcel
-                    org={org}
-                    onCancel={() => setCreatingFarmParcel(false)}
-                    onSaved={async (farmId, parcelId) => {
-                      setFarm(farmId); setParcel(parcelId); setCreatingFarmParcel(false); await refresh();
-                    }}
-                  /> : <>
                   <section className="card">
-                    <h2>Finca seleccionada</h2>
-                    <p>{f ? "Edita los datos de la finca seleccionada. Las nuevas fincas se crean junto con su primera parcela." : "Selecciona una finca para editarla."}</p>
-                    {writable && f && (
+                    <h2>{creatingFarm ? "Nueva finca" : "Finca seleccionada"}</h2>
+                    <p>{creatingFarm ? "Registra una finca nueva dentro de la organización seleccionada." : f ? "Edita los datos de la finca seleccionada." : "Selecciona una finca para editarla."}</p>
+                    {writable && (
                       <SaveForm
-                        key={farm + f.name + f.latitude + f.longitude}
-                        submitLabel="Guardar cambios"
+                        key={(creatingFarm ? "new" : farm) + f?.name + f?.latitude + f?.longitude}
+                        submitLabel={creatingFarm ? "Crear finca" : "Guardar cambios"}
                         onSave={async (b) => {
-                          const r = await api("/farms/" + farm, "PATCH", {
+                          const r = await api("/farms" + (!creatingFarm && farm ? "/" + farm : ""), creatingFarm || !farm ? "POST" : "PATCH", {
                             ...b,
+                            ...((creatingFarm || !farm) ? { organization_id: org } : {}),
                             latitude: Number(b.latitude),
                             longitude: Number(b.longitude),
                           });
                           setFarm(r.id);
+                          setParcel("");
+                          setCreatingFarm(false);
                           await refresh();
                         }}
                       >
-                        <Field label="Nombre de finca" name="name" defaultValue={f.name} required />
+                        <Field label="Nombre de finca" name="name" defaultValue={creatingFarm ? "" : f?.name || ""} required />
                         <Field
                           label="Latitud"
                           name="latitude"
@@ -463,7 +459,7 @@ function Workspace({ email }: { email: string }) {
                           step="any"
                           min="-90"
                           max="90"
-                          defaultValue={f.latitude}
+                          defaultValue={creatingFarm ? "" : f?.latitude ?? ""}
                           required
                         />
                         <Field
@@ -473,21 +469,21 @@ function Workspace({ email }: { email: string }) {
                           step="any"
                           min="-180"
                           max="180"
-                          defaultValue={f.longitude}
+                          defaultValue={creatingFarm ? "" : f?.longitude ?? ""}
                           required
                         />
                         <label>
                           Zona horaria
-                          <select name="timezone" defaultValue={f.timezone || "America/Guayaquil"}>
+                          <select name="timezone" defaultValue={creatingFarm ? "America/Guayaquil" : f?.timezone || "America/Guayaquil"}>
                             <option>America/Guayaquil</option>
                             <option>Pacific/Galapagos</option>
                             <option>America/Argentina/Buenos_Aires</option>
                             <option>America/Argentina/Cordoba</option>
                           </select>
                         </label>
+                        <button type="button" className="ghost" onClick={() => setCreatingFarm(!creatingFarm)}>{creatingFarm ? "Cancelar" : "Crear nueva finca"}</button>
                       </SaveForm>
                     )}
-                    {writable && <button type="button" className="ghost" onClick={() => setCreatingFarmParcel(true)}>Crear finca y parcela</button>}
                     {f && (
                       <p>
                         {f.name} · {f.latitude}, {f.longitude} · {f.timezone}
@@ -506,7 +502,6 @@ function Workspace({ email }: { email: string }) {
                       }}
                     />
                   )}
-                  </>}
                 </>
               }
             />
@@ -609,62 +604,6 @@ function SaveForm({
         <ErrorBox error={error} />
       </div>
     </form>
-  );
-}
-function NewFarmParcel({
-  org,
-  onCancel,
-  onSaved,
-}: {
-  org: string;
-  onCancel: () => void;
-  onSaved: (farmId: string, parcelId: string) => Promise<void>;
-}) {
-  const [geometry, setGeometry] = useState<any>(null);
-  return (
-    <section className="card">
-      <h2>Nueva finca y parcela</h2>
-      <p>Registra la finca junto con su primera parcela para que quede lista para usar.</p>
-      <SaveForm
-        submitLabel="Crear finca y parcela"
-        onSave={async (b) => {
-          if (!geometry) throw Error("Dibuja el contorno de la parcela antes de guardar");
-          const farm = await api("/farms", "POST", {
-            name: b.farm_name,
-            organization_id: org,
-            latitude: Number(b.latitude),
-            longitude: Number(b.longitude),
-            timezone: b.timezone,
-          });
-          const parcel = await api("/parcels", "POST", {
-            name: b.parcel_name,
-            organization_id: org,
-            farm_id: farm.id,
-            geometry,
-          });
-          await onSaved(farm.id, parcel.id);
-        }}
-      >
-        <Field label="Nombre de finca" name="farm_name" required />
-        <Field label="Nombre de primera parcela" name="parcel_name" required />
-        <Field label="Latitud" name="latitude" type="number" step="any" min="-90" max="90" required />
-        <Field label="Longitud" name="longitude" type="number" step="any" min="-180" max="180" required />
-        <label>
-          Zona horaria
-          <select name="timezone" defaultValue="America/Guayaquil">
-            <option>America/Guayaquil</option>
-            <option>Pacific/Galapagos</option>
-            <option>America/Argentina/Buenos_Aires</option>
-            <option>America/Argentina/Cordoba</option>
-          </select>
-        </label>
-        <div className="form-grid-map">
-          <label>Contorno de la primera parcela</label>
-          <ParcelMap geometry={geometry} onChange={setGeometry} onDrawingStart={() => setGeometry(null)} />
-        </div>
-        <button type="button" className="ghost" onClick={onCancel}>Cancelar</button>
-      </SaveForm>
-    </section>
   );
 }
 function ParcelEditor({
