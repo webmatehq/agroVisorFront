@@ -1135,10 +1135,10 @@ function Weather({ parcel }: { parcel: string }) {
     daily = data?.daily;
   return (
     <section className="card">
-      <h2>Meteorología de tu finca</h2>
+      <h2>Meteorología de tu parcela</h2>
       <p>
         Previsión modelada de Open-Meteo. No representa una estación de medición
-        en la finca.
+        en la parcela.
       </p>
       <ErrorBox error={r.error} />
       {r.isPending ? (
