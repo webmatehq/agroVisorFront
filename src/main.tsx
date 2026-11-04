@@ -1215,8 +1215,9 @@ function Ndvi({
   if (!parcel)
     return <section className="card">Selecciona una parcela.</section>;
   const observations = list(r.data),
+    visibleObservations = observations.slice(0, 4),
     observation =
-      observations.find((x) => x.id === selected) || observations[0];
+      visibleObservations.find((x) => x.id === selected) || visibleObservations[0];
   return (
     <section className="card">
       <h2>Salud vegetal · NDVI</h2>
@@ -1243,13 +1244,7 @@ function Ndvi({
               const j = await api(
                 `/parcels/${parcel}/ndvi/refresh`,
                 "POST",
-                (() => {
-                  const to = new Date().toISOString().slice(0, 10);
-                  const from = new Date(Date.now() - 2 * 86400000)
-                    .toISOString()
-                    .slice(0, 10);
-                  return { from_date: from, to_date: to };
-                })(),
+                {},
               );
               setJobId(j.id);
             } catch (e) {
@@ -1257,7 +1252,7 @@ function Ndvi({
             }
           }}
         >
-          Actualizar últimos 2 días
+          Actualizar observaciones
         </button>
       )}
       {job.data && (
@@ -1281,7 +1276,7 @@ function Ndvi({
               value={observation?.id || ""}
               onChange={(e) => setSelected(e.target.value)}
             >
-              {observations.map((x) => (
+              {visibleObservations.map((x) => (
                 <option key={x.id} value={x.id}>
                   {x.from_date} — {x.to_date} · {x.quality}
                 </option>
@@ -1314,7 +1309,7 @@ function Ndvi({
             aria-label="Histórico NDVI; altura proporcional al índice"
           >
             <span>NDVI</span>
-            {[...observations].reverse().map((x) => (
+            {[...visibleObservations].reverse().map((x) => (
               <button
                 key={x.id}
                 title={`${x.from_date}: ${x.ndvi_mean ?? "sin datos"} (${x.quality})`}
