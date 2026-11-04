@@ -9,9 +9,14 @@ export function coordinateResult(input:string):PlaceResult|null {
 export async function searchPlaces(input:string,signal:AbortSignal):Promise<PlaceResult[]> {
  const coordinates=coordinateResult(input);if(coordinates)return [coordinates];
  const name=input.trim();if(name.length<3)throw new Error('Escribe al menos tres letras o introduce latitud, longitud.');
- const url=new URL('https://geocoding-api.open-meteo.com/v1/search');
- url.search=new URLSearchParams({name,count:'7',language:'es',format:'json',countryCode:'EC'}).toString();
- const response=await fetch(url,{signal});if(!response.ok)throw new Error('No se pudo consultar el buscador. Inténtalo de nuevo.');
- const data=await response.json();if(data.error)throw new Error('No se pudo consultar el buscador.');
- return (data.results||[]).filter((p:any)=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)).map((p:any)=>({id:String(p.id),name:String(p.name),description:[p.admin2,p.admin1,p.country].filter(Boolean).join(', '),latitude:p.latitude,longitude:p.longitude,zoom:14}));
+ const countries=['EC','AR'];
+ const responses=await Promise.all(countries.map(async country=>{
+  const url=new URL('https://geocoding-api.open-meteo.com/v1/search');
+  url.search=new URLSearchParams({name,count:'7',language:'es',format:'json',countryCode:country}).toString();
+  const response=await fetch(url,{signal});
+  if(!response.ok)throw new Error('No se pudo consultar el buscador. Inténtalo de nuevo.');
+  return response.json();
+ }));
+ const seen=new Set<string>();
+ return responses.flatMap(data=>data.results||[]).filter((p:any)=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)&&!seen.has(String(p.id))&&seen.add(String(p.id))).map((p:any)=>({id:String(p.id),name:String(p.name),description:[p.admin2,p.admin1,p.country].filter(Boolean).join(', '),latitude:p.latitude,longitude:p.longitude,zoom:14}));
 }
