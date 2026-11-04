@@ -38,6 +38,18 @@ function ErrorBox({ error }: { error: unknown }) {
     </p>
   ) : null;
 }
+function polygonCenter(geometry: any) {
+  if (!geometry) return null;
+  const points = geometry.type === "Polygon"
+    ? geometry.coordinates.flat()
+    : geometry.coordinates.flat(2);
+  const valid = points.filter((point: any) => Array.isArray(point) && Number.isFinite(point[0]) && Number.isFinite(point[1]));
+  if (!valid.length) return null;
+  return {
+    latitude: valid.reduce((sum: number, point: number[]) => sum + point[1], 0) / valid.length,
+    longitude: valid.reduce((sum: number, point: number[]) => sum + point[0], 0) / valid.length,
+  };
+}
 function Auth({ recovery = false }: { recovery?: boolean }) {
   const [mode, setMode] = useState(recovery ? "password" : "login"),
     [message, setMessage] = useState(""),
@@ -627,6 +639,8 @@ function ParcelEditor({
     setGeometry(null);
     setShowExisting(true);
   }, [parcel?.id, farm]);
+  const selectedGeometry = showExisting ? (geometry || parcel?.geometry_geojson) : geometry;
+  const coordinates = polygonCenter(selectedGeometry);
   return (
     <section className="card">
       <h2>{edit ? "Parcela seleccionada" : "Nueva parcela"}</h2>
@@ -649,10 +663,16 @@ function ParcelEditor({
         </button>
       )}
       <ParcelMap
-        geometry={showExisting ? (geometry || parcel?.geometry_geojson) : geometry}
+        geometry={selectedGeometry}
         onChange={writable ? setGeometry : undefined}
         onDrawingStart={() => setShowExisting(false)}
       />
+      {coordinates && (
+        <div className="parcel-coordinate-cards" aria-label="Coordenadas calculadas de la parcela">
+          <div><span>Latitud</span><strong>{coordinates.latitude.toFixed(6)}</strong></div>
+          <div><span>Longitud</span><strong>{coordinates.longitude.toFixed(6)}</strong></div>
+        </div>
+      )}
       {writable && (
         <SaveForm
           key={String(edit) + parcel?.id}
