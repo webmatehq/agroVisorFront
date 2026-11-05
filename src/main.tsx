@@ -433,7 +433,7 @@ function Workspace({ email }: { email: string }) {
                   <section className="card">
                     <h2>{creatingOrg ? "Nueva organización" : "Organización seleccionada"}</h2>
                     <p>{creatingOrg ? "Crea otra organización para administrar sus fincas y parcelas." : "Edita los datos de la organización seleccionada."}</p>
-                    <SaveForm key={(creatingOrg ? "new" : org) + selectedOrg?.name} submitLabel={creatingOrg ? "Crear organización" : "Guardar cambios"} onSave={async (b) => {
+                    <SaveForm key={(creatingOrg ? "new" : org) + selectedOrg?.name} submitLabel={creatingOrg ? "Crear organización" : "Guardar cambios"} secondaryAction={<button type="button" className="ghost" onClick={() => setCreatingOrg(!creatingOrg)}>{creatingOrg ? "Cancelar" : "Crear nueva organización"}</button>} onSave={async (b) => {
                       if (creatingOrg) {
                         const r = await api("/organizations", "POST", b);
                         setOrg(r.id); setFarm(""); setParcel(""); setCreatingOrg(false);
@@ -441,7 +441,6 @@ function Workspace({ email }: { email: string }) {
                       await refresh();
                     }}>
                       <Field label="Nombre de organización" name="name" defaultValue={creatingOrg ? "" : selectedOrg?.name || ""} required />
-                      <button type="button" className="ghost" onClick={() => setCreatingOrg(!creatingOrg)}>{creatingOrg ? "Cancelar" : "Crear nueva organización"}</button>
                     </SaveForm>
                   </section>
                   <section className="card">
