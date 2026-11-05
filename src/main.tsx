@@ -55,6 +55,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
     [message, setMessage] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const siteUrl = (import.meta.env.VITE_SITE_URL || location.origin).replace(/\/$/, "");
   return (
     <main className="auth">
       <div className="brand">◈ SurcoVisor</div>
@@ -80,12 +81,12 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
                   ? await supabase!.auth.signUp({
                       email,
                       password,
-                      options: { emailRedirectTo: location.origin },
+                      options: { emailRedirectTo: siteUrl },
                     })
                   : mode === "password"
                     ? await supabase!.auth.updateUser({ password })
                     : await supabase!.auth.resetPasswordForEmail(email, {
-                        redirectTo: location.origin + "/?recovery=1",
+                        redirectTo: siteUrl + "/?recovery=1",
                       });
             if (r.error) throw r.error;
             setMessage(
