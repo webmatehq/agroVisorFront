@@ -346,3 +346,6 @@
   .locations-grid { grid-template-columns:1fr; gap:14px; }
   .landing .locations-section { padding-bottom:40px; }
 }
+
+.landing-nav > a.landing-brand { color:#173c30; text-decoration:none; cursor:pointer; }
+.landing-nav > a.landing-brand:focus-visible { outline:2px solid #286448; outline-offset:5px; border-radius:4px; }
