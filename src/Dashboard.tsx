@@ -11,7 +11,7 @@ export function Dashboard({farm,parcel,p}:any){
  const events=useQuery({queryKey:['dashboard-events',parcel?.id],queryFn:()=>api(`/events?parcel_id=${parcel.id}&limit=3`),enabled:!!parcel?.id});
  const observations=list(ndvi.data),current=observations[0],w=weather.data?.data?.payload,daily=w?.daily;
  const image=layer==='ndvi'?current?.ndvi_raster_url:current?.raster_url;
- const series=[...observations].reverse().filter(x=>x.ndvi_mean!=null&&Number.isFinite(Number(x.ndvi_mean)));
+ const series=[...observations.slice(0,4)].reverse().filter(x=>x.ndvi_mean!=null&&Number.isFinite(Number(x.ndvi_mean)));
  const labels:Record<string,string>={irrigation:'Riego',fertilization:'Fertilización',treatment:'Tratamiento',inspection:'Inspección',harvest:'Cosecha',note:'Nota'};
  return <>
  <div className="page-heading"><div><p className="eyebrow">{farm?.name||'MI EXPLOTACIÓN'} / {parcel?.name||'SELECCIONA UN LOTE'}</p><h1>Tu campo, de un vistazo.</h1><p className="subtitle">{parcel?.name||'Selecciona una parcela'} · Cada observación cuenta.</p></div><NavLink className="button" to="/cuaderno">+ Registrar labor</NavLink></div>

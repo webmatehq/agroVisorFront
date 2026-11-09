@@ -38,18 +38,6 @@ function ErrorBox({ error }: { error: unknown }) {
     </p>
   ) : null;
 }
-function polygonCenter(geometry: any) {
-  if (!geometry) return null;
-  const points = geometry.type === "Polygon"
-    ? geometry.coordinates.flat()
-    : geometry.coordinates.flat(2);
-  const valid = points.filter((point: any) => Array.isArray(point) && Number.isFinite(point[0]) && Number.isFinite(point[1]));
-  if (!valid.length) return null;
-  return {
-    latitude: valid.reduce((sum: number, point: number[]) => sum + point[1], 0) / valid.length,
-    longitude: valid.reduce((sum: number, point: number[]) => sum + point[0], 0) / valid.length,
-  };
-}
 function Auth({ recovery = false }: { recovery?: boolean }) {
   const [mode, setMode] = useState(recovery ? "password" : "login"),
     [message, setMessage] = useState(""),
@@ -61,7 +49,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
       <div className="brand">◈ SurcoVisor</div>
       <h1>Tu campo, conectado.</h1>
       <p>
-        Gestiona tu finca con información real, desde cualquier lugar de
+        Gestiona tu finca con información real, desde cualquier lugar del
         mundo.
       </p>
       <form
@@ -135,7 +123,7 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
           />
         )}
         <ErrorBox error={error} />
-        {message && <p role="status">{message}</p>}
+        {message && <p className="auth-success" role="status">{message}</p>}
         <button disabled={busy}>
           {busy
             ? "Procesando…"
@@ -151,17 +139,17 @@ function Auth({ recovery = false }: { recovery?: boolean }) {
           <button
             type="button"
             className="ghost"
-            onClick={() => setMode(mode === "login" ? "register" : "login")}
+            onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); setMessage(""); }}
           >
             {mode === "login" ? "Crear cuenta" : "Ya tengo cuenta"}
           </button>
-          <button
+          {mode !== "reset" && <button
             type="button"
             className="ghost"
-            onClick={() => setMode("reset")}
+            onClick={() => { setMode("reset"); setError(""); setMessage(""); }}
           >
             Olvidé mi contraseña
-          </button>
+          </button>}
         </div>
       </form>
       <a className="return-home" href="/">← Volver a la página principal</a>
@@ -278,7 +266,7 @@ function ModuleHub() {
   const modules = [
     { to: "/admin", title: "Índices", text: "Consulta los índices y observaciones disponibles de tus parcelas.", icon: "/ndvi" },
     { to: "/cuaderno", title: "Notebook", text: "Registra cualquier actividad, observación o labor realizada en el campo.", icon: "/cuaderno" },
-    { to: "/gestion", title: "Organizaciones y parcelas", text: "Crea y administra tus organizaciones, fincas y parcelas.", icon: "/fincas" },
+    { to: "/gestion", title: "Fincas y parcelas", text: "Crea y administra tus fincas y parcelas.", icon: "/fincas" },
     { to: "/servicios/solicitar", title: "Servicios", text: "Consulta tus parcelas, solicita fumigaciones y revisa el historial de servicios.", icon: "/fumigaciones" },
   ];
   return <section className="module-hub">
@@ -295,10 +283,8 @@ function Workspace({ email }: { email: string }) {
   const [org, setOrg] = useState(""),
     [farm, setFarm] = useState(""),
     [parcel, setParcel] = useState(""),
-    [creatingOrg, setCreatingOrg] = useState(false),
     [creatingFarm, setCreatingFarm] = useState(false);
   const orgs = list(me.data?.organizations);
-  const selectedOrg = orgs.find((x) => x.id === org);
   useEffect(() => {
     if (!org && orgs[0]) setOrg(orgs[0].id);
   }, [org, orgs]);
@@ -316,6 +302,9 @@ function Workspace({ email }: { email: string }) {
     if (!farm && list(farms.data)[0]) setFarm(list(farms.data)[0].id);
   }, [farm, farms.data]);
   useEffect(() => {
+    if (org && !farms.isPending && !list(farms.data).length) setCreatingFarm(true);
+  }, [org, farms.isPending, farms.data]);
+  useEffect(() => {
     if (!parcel && list(parcels.data)[0]) setParcel(list(parcels.data)[0].id);
   }, [parcel, parcels.data]);
   const f = list(farms.data).find((x) => x.id === farm),
@@ -330,7 +319,7 @@ function Workspace({ email }: { email: string }) {
   const navLinks: [string, string][] = isServices
     ? [["/servicios/solicitar", "Solicitar"], ["/servicios/historial", "Historial"]]
     : isManagement
-      ? [["/gestion", "Organizaciones y parcelas"]]
+      ? [["/gestion", "Fincas y parcelas"]]
       : isNotebook
         ? [["/cuaderno", "Registrar actividad"]]
         : [["/admin", "Vista general"], ["/clima", "Meteorología"], ["/ndvi", "Desarrollo"]];
@@ -361,8 +350,6 @@ function Workspace({ email }: { email: string }) {
             </NavLink>
           ))}
         </nav>
-        <div className="sidebar-bottom"><div className="campaign"><span className="tiny">MI ORGANIZACIÓN</span><label className="organization-picker"><span className="sr-only">Organización</span><select value={org} onChange={e=>{setOrg(e.target.value);setFarm("");setParcel("")}}><option value="">Selecciona</option>{orgs.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><span>Crecer empieza por observar.</span></div>
-        </div>
       </aside>
       <div className="app-shell">
         <header className="topbar"><div className="context">
@@ -400,11 +387,11 @@ function Workspace({ email }: { email: string }) {
         <ErrorBox error={me.error || farms.error || parcels.error} />
         {me.isPending ? (
           <p>Cargando organizaciones…</p>
-        ) : !org && !isManagement ? (
+        ) : !org ? (
           <section className="card">
-            <h2>Aún no hay una organización creada</h2>
-            <p>Accede a Gestión para crear tu organización y registrar tus parcelas.</p>
-            <NavLink className="button" to="/gestion">Ir a Gestión</NavLink>
+            <h2>Preparando tu explotación</h2>
+            <p>Estamos configurando el espacio para tus fincas y parcelas. Vuelve a intentarlo en unos segundos.</p>
+            <button className="button" onClick={() => me.refetch()}>Volver a intentar</button>
           </section>
         ) : (
           <Routes>
@@ -423,39 +410,20 @@ function Workspace({ email }: { email: string }) {
             <Route
               path="/gestion"
               element={
-                !org ? <section className="card">
-                  <h2>Empecemos por tu explotación</h2>
-                  <p>Crea tu organización y después registra tu primera finca.</p>
-                  <SaveForm onSave={async (b) => { const r = await api("/organizations", "POST", b); setOrg(r.id); await refresh(); }}>
-                    <Field label="Nombre de organización" name="name" required />
-                  </SaveForm>
-                </section> : <>
+                <>
                   <section className="card">
-                    <h2>{creatingOrg ? "Nueva organización" : "Organización seleccionada"}</h2>
-                    <p>{creatingOrg ? "Crea otra organización para administrar sus fincas y parcelas." : "Edita los datos de la organización seleccionada."}</p>
-                    <SaveForm key={(creatingOrg ? "new" : org) + selectedOrg?.name} submitLabel={creatingOrg ? "Crear organización" : "Guardar cambios"} secondaryAction={<button type="button" className="ghost" onClick={() => setCreatingOrg(!creatingOrg)}>{creatingOrg ? "Cancelar" : "Crear nueva organización"}</button>} onSave={async (b) => {
-                      if (creatingOrg) {
-                        const r = await api("/organizations", "POST", b);
-                        setOrg(r.id); setFarm(""); setParcel(""); setCreatingOrg(false);
-                      } else await api("/organizations/" + org, "PATCH", b);
-                      await refresh();
-                    }}>
-                      <Field label="Nombre de organización" name="name" defaultValue={creatingOrg ? "" : selectedOrg?.name || ""} required />
-                    </SaveForm>
-                  </section>
-                  <section className="card">
-                    <h2>{creatingFarm ? "Nueva finca" : "Finca seleccionada"}</h2>
-                    <p>{creatingFarm ? "Registra una finca nueva dentro de la organización seleccionada." : f ? "Edita los datos de la finca seleccionada." : "Selecciona una finca para editarla."}</p>
+                    <h2>{creatingFarm || !farm ? "Nueva finca" : "Finca seleccionada"}</h2>
+                    <p>{creatingFarm || !farm ? "Registra una finca para comenzar a crear sus parcelas." : "Edita el nombre de la finca seleccionada."}</p>
                     {writable && (
                       <SaveForm
-                        key={(creatingFarm ? "new" : farm) + f?.name + f?.latitude + f?.longitude}
-                        submitLabel={creatingFarm ? "Crear finca" : "Guardar cambios"}
+                        key={(creatingFarm || !farm ? "new" : farm) + f?.name}
+                        submitLabel={creatingFarm || !farm ? "Crear finca" : "Guardar cambios"}
+                        secondaryAction={farm ? <button type="button" className="ghost" onClick={() => setCreatingFarm(!creatingFarm)}>{creatingFarm ? "Cancelar" : "Crear nueva finca"}</button> : undefined}
                         onSave={async (b) => {
-                          const r = await api("/farms" + (!creatingFarm && farm ? "/" + farm : ""), creatingFarm || !farm ? "POST" : "PATCH", {
+                          const create = creatingFarm || !farm;
+                          const r = await api("/farms" + (!create ? "/" + farm : ""), create ? "POST" : "PATCH", {
                             ...b,
-                            ...((creatingFarm || !farm) ? { organization_id: org } : {}),
-                            latitude: Number(b.latitude),
-                            longitude: Number(b.longitude),
+                            ...(create ? { organization_id: org } : {}),
                           });
                           setFarm(r.id);
                           setParcel("");
@@ -463,43 +431,8 @@ function Workspace({ email }: { email: string }) {
                           await refresh();
                         }}
                       >
-                        <Field label="Nombre de finca" name="name" defaultValue={creatingFarm ? "" : f?.name || ""} required />
-                        <Field
-                          label="Latitud"
-                          name="latitude"
-                          type="number"
-                          step="any"
-                          min="-90"
-                          max="90"
-                          defaultValue={creatingFarm ? "" : f?.latitude ?? ""}
-                          required
-                        />
-                        <Field
-                          label="Longitud"
-                          name="longitude"
-                          type="number"
-                          step="any"
-                          min="-180"
-                          max="180"
-                          defaultValue={creatingFarm ? "" : f?.longitude ?? ""}
-                          required
-                        />
-                        <label>
-                          Zona horaria
-                          <select name="timezone" defaultValue={creatingFarm ? "America/Guayaquil" : f?.timezone || "America/Guayaquil"}>
-                            <option>America/Guayaquil</option>
-                            <option>Pacific/Galapagos</option>
-                            <option>America/Argentina/Buenos_Aires</option>
-                            <option>America/Argentina/Cordoba</option>
-                          </select>
-                        </label>
-                        <button type="button" className="ghost" onClick={() => setCreatingFarm(!creatingFarm)}>{creatingFarm ? "Cancelar" : "Crear nueva finca"}</button>
+                        <Field label="Nombre de finca" name="name" defaultValue={creatingFarm || !farm ? "" : f?.name || ""} required />
                       </SaveForm>
-                    )}
-                    {f && (
-                      <p>
-                        {f.name} · {f.latitude}, {f.longitude} · {f.timezone}
-                      </p>
                     )}
                   </section>
                   {farm && (
@@ -546,6 +479,7 @@ function Workspace({ email }: { email: string }) {
                 <Ndvi
                   parcel={parcel}
                   geometry={p?.geometry_geojson}
+                  latitude={p?.latitude}
                   writable={writable}
                 />
               }
@@ -612,9 +546,9 @@ function SaveForm({
       <div className="form-actions">
         <button disabled={busy}>{busy ? "Guardando…" : submitLabel}</button>
         {secondaryAction}
-        {ok && <span role="status">Guardado correctamente</span>}
-        <ErrorBox error={error} />
       </div>
+      {ok && <p className="form-success" role="status">Guardado correctamente.</p>}
+      <ErrorBox error={error} />
     </form>
   );
 }
@@ -640,16 +574,11 @@ function ParcelEditor({
     setShowExisting(true);
   }, [parcel?.id, farm]);
   const selectedGeometry = showExisting ? (geometry || parcel?.geometry_geojson) : geometry;
-  const coordinates = polygonCenter(selectedGeometry);
+  const coordinates = edit && !geometry && showExisting && parcel?.latitude != null && parcel?.longitude != null ? parcel : null;
   return (
     <section className="card">
       <h2>{edit ? "Parcela seleccionada" : "Nueva parcela"}</h2>
       <p>{edit ? "Edita los datos y el contorno de la parcela seleccionada." : "Dibuja el contorno de una nueva parcela. La superficie se calcula en el servidor."}</p>
-      {edit && parcel?.latitude != null && parcel?.longitude != null && (
-        <p className="parcel-coordinates">
-          Coordenadas calculadas del contorno: {Number(parcel.latitude).toFixed(6)}, {Number(parcel.longitude).toFixed(6)}
-        </p>
-      )}
       {writable && parcel && (
         <button
           className="ghost"
@@ -668,27 +597,35 @@ function ParcelEditor({
         onDrawingStart={() => setShowExisting(false)}
       />
       {coordinates && (
-        <div className="parcel-coordinate-cards" aria-label="Coordenadas calculadas de la parcela">
-          <div><span>Latitud</span><strong>{coordinates.latitude.toFixed(6)}</strong></div>
-          <div><span>Longitud</span><strong>{coordinates.longitude.toFixed(6)}</strong></div>
+        <div className="parcel-coordinate-cards" aria-label="Centroide de la parcela guardada">
+          <div><span>Latitud del centroide</span><strong>{Number(coordinates.latitude).toFixed(6)}</strong></div>
+          <div><span>Longitud del centroide</span><strong>{Number(coordinates.longitude).toFixed(6)}</strong></div>
         </div>
       )}
+      {edit && !geometry && parcel?.area_ha != null && (
+        <p>Superficie de la parcela guardada: <strong>{Number(parcel.area_ha).toLocaleString("es-EC", { maximumFractionDigits: 2 })} ha</strong> ({Math.round(Number(parcel.area_ha) * 10000).toLocaleString("es-EC")} m²).</p>
+      )}
+      {geometry && <p>Las coordenadas del centroide se calcularán al guardar el contorno.</p>}
       {writable && (
         <SaveForm
           key={String(edit) + parcel?.id}
           submitLabel={edit ? "Guardar cambios" : "Crear parcela"}
           onSave={async (b) => {
-            if (!geometry) throw Error("Dibuja el contorno antes de guardar");
+            const contour = geometry || (edit && showExisting ? parcel?.geometry_geojson : null);
+            if (!contour) throw Error("Dibuja el contorno antes de guardar.");
             const r = await api(
               "/parcels" + (edit ? "/" + parcel.id : ""),
               edit ? "PATCH" : "POST",
               {
                 ...b,
                 ...(!edit ? { organization_id: org, farm_id: farm } : {}),
-                geometry,
+                geometry: contour,
               },
             );
             await saved(r.id);
+            setGeometry(null);
+            setShowExisting(true);
+            setEdit(true);
           }}
         >
           <Field
@@ -705,8 +642,7 @@ function ParcelEditor({
 const laborTypes = [
   ["irrigation", "Riego"],
   ["fertilization", "Fertilización"],
-  ["treatment", "Tratamiento"],
-  ["treatment", "Fumigación"],
+  ["treatment", "Fumigación / tratamiento"],
   ["inspection", "Inspección"],
   ["harvest", "Cosecha"],
   ["note", "Nota"],
@@ -824,7 +760,7 @@ function Records({
           </div>
         )}
         {writable && formOpen && (
-          <dialog ref={dialogRef} className="entry-dialog">
+          <dialog ref={dialogRef} className="entry-dialog" onCancel={() => setFormOpen(false)}>
             <div className="dialog-top">
               <div>
                 <p className="eyebrow">CUADERNO DE CAMPO</p>
@@ -862,6 +798,8 @@ function Records({
                     if (body[key] === "") delete body[key];
                   if (kind === "events" && body.cost_usd !== undefined)
                     body.cost_usd = Number(body.cost_usd);
+                  if (kind === "events" && body.dose !== undefined)
+                    body.dose = Number(body.dose);
                   await api(
                     "/" + kind + (edit ? "/" + edit.id : ""),
                     edit ? "PATCH" : "POST",
@@ -949,13 +887,17 @@ function Records({
                       placeholder="Ej. Agua"
                     />
                     <Field
-                      label="Dosis y unidad (opcional)"
+                      label="Dosis (opcional)"
                       name="dose"
+                      type="number"
+                      min="0"
+                      step="any"
                       defaultValue={edit?.dose}
-                      placeholder="Ej. 20 mm"
+                      placeholder="Ej. 20"
                     />
+                    <Field label="Unidad (opcional)" name="unit" defaultValue={edit?.unit} placeholder="Ej. mm" />
                     <Field
-                      label="Coste total (€)"
+                      label="Coste total (USD)"
                       type="number"
                       min="0"
                       step="0.01"
@@ -978,7 +920,7 @@ function Records({
                   <th>Labor</th>
                   <th>Observación</th>
                   <th>Producto / dosis</th>
-                  <th>Coste (€)</th>
+                  <th>Coste (USD)</th>
                 </tr>
               </thead>
               <tbody>
@@ -986,7 +928,7 @@ function Records({
                   <tr key={x.id}>
                     <td>{x.event_date}</td>
                     <td>
-                      <span className="tag">{x.type}</span>
+                      <span className="tag">{laborTypes.find(([value]) => value === x.type)?.[1] || x.type}</span>
                     </td>
                     <td className="description">{x.notes || "—"}</td>
                     <td>
@@ -1124,9 +1066,10 @@ function Photos({ event, writable }: { event: string; writable: boolean }) {
   );
 }
 function Weather({ parcel }: { parcel: string }) {
+  const [period, setPeriod] = useState(0);
   const r = useQuery({
-    queryKey: ["weather", parcel],
-    queryFn: () => api(`/parcels/${parcel}/weather`),
+    queryKey: ["weather", parcel, period],
+    queryFn: () => api(`/parcels/${parcel}/weather?past_days=${period}`),
     enabled: !!parcel,
   });
   if (!parcel) return <section className="card">Selecciona una parcela.</section>;
@@ -1138,8 +1081,15 @@ function Weather({ parcel }: { parcel: string }) {
       <h2>Meteorología de tu parcela</h2>
       <p>
         Previsión modelada de Open-Meteo. No representa una estación de medición
-        en la parcela.
+        en la parcela; utiliza una celda cercana al centroide.
       </p>
+      <label>Período
+        <select value={period} onChange={(e) => setPeriod(Number(e.target.value))}>
+          <option value={0}>Pronóstico de 7 días</option>
+          <option value={15}>Últimos 15 días</option>
+          <option value={30}>Últimos 30 días</option>
+        </select>
+      </label>
       <ErrorBox error={r.error} />
       {r.isPending ? (
         <p>Consultando previsión…</p>
@@ -1156,7 +1106,7 @@ function Weather({ parcel }: { parcel: string }) {
             {snapshot?.fetched_at &&
               new Date(snapshot.fetched_at).toLocaleString("es-EC")}
           </p>
-          {data?.current && (
+          {period === 0 && data?.current && (
             <div className="stats">
               <div>
                 <strong>{data.current.temperature_2m ?? "—"} °C</strong>
@@ -1172,7 +1122,9 @@ function Weather({ parcel }: { parcel: string }) {
               </div>
             </div>
           )}
-          {daily?.time && (
+          {daily?.time && data?.current?.time && (
+            <>
+            <p>{period ? "Estimaciones históricas modeladas; no son mediciones de una estación." : "Pronóstico diario modelado."}{snapshot?.timezone && ` Zona horaria: ${snapshot.timezone}.`}</p>
             <div className="table-scroll">
               <table>
                 <thead>
@@ -1184,7 +1136,7 @@ function Weather({ parcel }: { parcel: string }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {daily.time.map((d: string, i: number) => (
+                  {daily.time.map((d: string, i: number) => ({d, i})).filter(({d}: {d: string}) => period ? d < data.current.time.slice(0, 10) : d >= data.current.time.slice(0, 10)).map(({d, i}: {d: string, i: number}) => (
                     <tr key={d}>
                       <td>{d}</td>
                       <td>{daily.temperature_2m_min?.[i] ?? "—"} °C</td>
@@ -1195,6 +1147,7 @@ function Weather({ parcel }: { parcel: string }) {
                 </tbody>
               </table>
             </div>
+            </>
           )}
           <button className="ghost" onClick={() => r.refetch()}>
             Volver a consultar
@@ -1207,16 +1160,22 @@ function Weather({ parcel }: { parcel: string }) {
 function Ndvi({
   parcel,
   geometry,
+  latitude,
   writable,
 }: {
   parcel: string;
   geometry: any;
+  latitude?: number | null;
   writable: boolean;
 }) {
   const q = useQueryClient(),
     [jobId, setJobId] = useState(""),
     [error, setError] = useState(""),
-    [selected, setSelected] = useState("");
+    [selected, setSelected] = useState(""),
+    [compareId, setCompareId] = useState(""),
+    [fromDate, setFromDate] = useState(""),
+    [toDate, setToDate] = useState(""),
+    [showAll, setShowAll] = useState(false);
   const r = useQuery({
     queryKey: ["ndvi", parcel],
     queryFn: () => api(`/parcels/${parcel}/ndvi`),
@@ -1227,22 +1186,29 @@ function Ndvi({
     queryFn: () => api("/jobs/" + jobId),
     enabled: !!jobId,
     refetchInterval: (query) =>
-      ["completed", "failed"].includes(query.state.data?.status) ? false : 5000,
+      ["completed", "failed", "obsolete"].includes(query.state.data?.status) ? false : 5000,
   });
   useEffect(() => {
     setSelected("");
+    setCompareId("");
+    setFromDate("");
+    setToDate("");
     setJobId("");
+    setShowAll(false);
   }, [parcel]);
   useEffect(() => {
-    if (job.data?.status === "completed")
+    if (job.data?.status === "completed") {
       q.invalidateQueries({ queryKey: ["ndvi", parcel] });
+      q.invalidateQueries({ queryKey: ["dashboard-ndvi", parcel] });
+    }
   }, [job.data?.status, parcel, q]);
   if (!parcel)
     return <section className="card">Selecciona una parcela.</section>;
   const observations = list(r.data),
-    visibleObservations = observations.slice(0, 4),
+    visibleObservations = showAll ? observations : observations.slice(0, 4),
     observation =
-      visibleObservations.find((x) => x.id === selected) || visibleObservations[0];
+      visibleObservations.find((x) => x.id === selected) || visibleObservations[0],
+    comparison = observations.find((x) => x.id === compareId);
   return (
     <section className="card">
       <h2>Salud vegetal · NDVI</h2>
@@ -1250,6 +1216,19 @@ function Ndvi({
         Sentinel-2 L2A · El índice describe vigor vegetal; no es un diagnóstico
         agronómico. Nubes y sombras pueden impedir observaciones válidas.
       </p>
+      <details className="satellite-guide">
+        <summary>Cómo interpretar las imágenes y los índices</summary>
+        <p>Sentinel-2 forma parte del programa europeo Copernicus. Sus imágenes permiten seguir cambios en la vegetación; la disponibilidad depende del paso del satélite y de las nubes. Los píxeles pueden mezclar distintos elementos del terreno y no sustituyen una visita a la parcela.</p>
+        <p><strong>NDVI</strong> = (infrarrojo cercano − rojo) / (infrarrojo cercano + rojo). Sentinel-2 usa B08 y B04. Es útil para observar diferencias de vigor, pero puede saturarse en vegetación densa y no identifica la causa de una anomalía.</p>
+        <p>Otros índices de referencia, todavía sin cálculo por parcela en esta pantalla:</p>
+        <ul>
+          <li><strong>EVI:</strong> utiliza azul, rojo e infrarrojo cercano; ayuda a estudiar vegetación densa y requiere reflectancias correctamente escaladas.</li>
+          <li><strong>NDMI:</strong> usa infrarrojo cercano e infrarrojo de onda corta; refleja cambios relacionados con el agua de la vegetación, no mide directamente la humedad del suelo.</li>
+          <li><strong>SAVI:</strong> utiliza rojo e infrarrojo cercano e incorpora un ajuste para reducir la influencia del suelo; ese ajuste depende del contexto.</li>
+          <li><strong>NDRE:</strong> usa el borde rojo y el infrarrojo cercano para explorar variaciones relacionadas con la vegetación; no diagnostica carencias por sí solo.</li>
+        </ul>
+        <p>Los valores dependen del cultivo, su etapa, el suelo y la fecha. Si aparece una diferencia, úsala para orientar una inspección en campo.</p>
+      </details>
       <ErrorBox error={r.error || job.error || error} />
       {r.data?.configured === false && (
         <p className="notice">
@@ -1258,18 +1237,29 @@ function Ndvi({
         </p>
       )}
       {writable && (
+        <div className="ndvi-request">
+        <details>
+          <summary>Consultar otro período</summary>
+          <p>Deja ambas fechas vacías para actualizar el período reciente. Puedes consultar un intervalo de hasta 366 días.</p>
+          <div className="ndvi-request-dates">
+            <label>Desde<input type="date" value={fromDate} max={toDate || new Date().toISOString().slice(0,10)} onChange={(e) => setFromDate(e.target.value)} /></label>
+            <label>Hasta<input type="date" value={toDate} min={fromDate || undefined} max={new Date().toISOString().slice(0,10)} onChange={(e) => setToDate(e.target.value)} /></label>
+          </div>
+        </details>
         <button
           disabled={
             r.data?.configured === false ||
-            (!!jobId && !["completed", "failed"].includes(job.data?.status))
+            (!!jobId && !["completed", "failed", "obsolete"].includes(job.data?.status))
           }
           onClick={async () => {
             setError("");
             try {
+              if (Boolean(fromDate) !== Boolean(toDate)) throw Error("Selecciona tanto la fecha inicial como la final.");
+              if (fromDate && (fromDate > toDate || Date.parse(toDate) - Date.parse(fromDate) > 366 * 86400000)) throw Error("Selecciona un período válido de hasta 366 días.");
               const j = await api(
                 `/parcels/${parcel}/ndvi/refresh`,
                 "POST",
-                {},
+                fromDate ? { from_date: fromDate, to_date: toDate } : {},
               );
               setJobId(j.id);
             } catch (e) {
@@ -1279,12 +1269,16 @@ function Ndvi({
         >
           Actualizar observaciones
         </button>
+        </div>
       )}
       {job.data && (
         <p role="status">
-          Procesamiento: {job.data.status}
+          Procesamiento: {({queued: "en espera", processing: "en curso", completed: "completado", failed: "no se pudo completar", obsolete: "contorno modificado; solicita una nueva actualización"} as Record<string, string>)[job.data.status] || job.data.status}
           {job.data.last_error && " · " + job.data.last_error}
         </p>
+      )}
+      {job.data?.status === "queued" && job.data?.created_at && Date.now() - Date.parse(job.data.created_at) > 120000 && (
+        <p className="notice" role="status">La solicitud sigue en espera. Si no avanza, es necesario revisar que el proceso satelital esté activo.</p>
       )}
       {r.isPending ? (
         <p>Cargando observaciones…</p>
@@ -1303,11 +1297,12 @@ function Ndvi({
             >
               {visibleObservations.map((x) => (
                 <option key={x.id} value={x.id}>
-                  {x.from_date} — {x.to_date} · {x.quality}
+                  {x.from_date} — {x.to_date} · {({valid: "píxeles disponibles válidos", low_coverage: "pocos píxeles válidos", no_data: "sin datos"} as Record<string, string>)[x.quality] || x.quality}
                 </option>
               ))}
             </select>
           </label>
+          {observations.length > 4 && <button type="button" className="ghost ndvi-history-toggle" onClick={() => { setShowAll(!showAll); setSelected(""); }}>{showAll ? "Mostrar las cuatro más recientes" : "Ver todas las fechas disponibles"}</button>}
           <div className="stats">
             <div>
               <strong>
@@ -1321,27 +1316,49 @@ function Ndvi({
               <strong>
                 {(Number(observation?.valid_fraction || 0) * 100).toFixed(0)} %
               </strong>
-              <small>Cobertura válida</small>
+              <small>Píxeles válidos entre los disponibles</small>
             </div>
             <div>
-              <strong>{observation?.quality}</strong>
+              <strong>{({valid: "Válida", low_coverage: "Limitada", no_data: "Sin datos"} as Record<string, string>)[observation?.quality] || "—"}</strong>
               <small>Calidad técnica</small>
             </div>
           </div>
+          <p>NDVI mínimo: {observation?.ndvi_min == null ? "—" : Number(observation.ndvi_min).toFixed(3)} · máximo: {observation?.ndvi_max == null ? "—" : Number(observation.ndvi_max).toFixed(3)} · desviación estándar: {observation?.ndvi_stddev == null ? "no disponible" : Number(observation.ndvi_stddev).toFixed(3)}.</p>
+          <p>Mediana NDVI: {observation?.ndvi_median == null ? "no disponible" : Number(observation.ndvi_median).toFixed(3)}.</p>
+          {Array.isArray(observation?.ndvi_histogram) && observation.ndvi_histogram.length > 0 && <div className="ndvi-histogram">
+            <h3>Distribución de píxeles válidos</h3>
+            <p>Porcentaje de píxeles válidos en cada intervalo; no representa un diagnóstico. La superficie es una aproximación basada en la cuadrícula de cálculo: los píxeles del borde pueden hacer que difiera de la superficie de la parcela.</p>
+            {observation.ndvi_histogram.map((bin: any, index: number) => {
+              const total = observation.ndvi_histogram.reduce((sum: number, item: any) => sum + (Number(item.count) || 0), 0);
+              const percentage = total ? Number(bin.count || 0) / total * 100 : 0;
+              const cellAreaHa = latitude == null ? null : Math.pow(111320 * 0.0001, 2) * Math.cos(Number(latitude) * Math.PI / 180) / 10000;
+              return <div className="ndvi-histogram-row" key={index}><span>{Number(bin.low).toFixed(1)} a {Math.min(1, Number(bin.high)).toFixed(1)}</span><div className="ndvi-histogram-track"><div style={{width: `${percentage}%`}} /></div><span>{Number(bin.count || 0)} · {percentage.toFixed(1)} %{cellAreaHa != null && <> · ≈{(Number(bin.count || 0) * cellAreaHa).toFixed(2)} ha</>}</span></div>;
+            })}
+          </div>}
+          {observations.length > 1 && <div className="ndvi-comparison">
+            <label>Comparar con otra fecha
+              <select value={compareId} onChange={(e) => setCompareId(e.target.value)}>
+                <option value="">Selecciona una fecha</option>
+                {observations.filter((x) => x.id !== observation?.id).map((x) => <option key={x.id} value={x.id}>{x.from_date} — {x.to_date}</option>)}
+              </select>
+            </label>
+            {comparison && (comparison.id === observation?.id ? <p className="notice">Selecciona dos fechas distintas.</p> : observation?.ndvi_mean == null || comparison.ndvi_mean == null || Number(observation.valid_fraction) < 0.7 || Number(comparison.valid_fraction) < 0.7 ? <p className="notice">No se muestra la diferencia: una de las fechas no tiene datos o tiene menos del 70 % de píxeles válidos entre los disponibles.</p> : <p>Diferencia del NDVI medio ({observation.from_date} frente a {comparison.from_date}): <strong>{(Number(observation.ndvi_mean) - Number(comparison.ndvi_mean)).toFixed(3)}</strong>. Compárala con cautela: las zonas sin datos pueden variar entre fechas y el índice no es un diagnóstico.</p>)}
+          </div>}
           <div
             className="chart"
-            role="img"
-            aria-label="Histórico NDVI; altura proporcional al índice"
+            aria-label="Seleccionar una fecha del histórico NDVI"
           >
             <span>NDVI</span>
-            {[...visibleObservations].reverse().map((x) => (
+            {[...visibleObservations].reverse().filter((x) => x.ndvi_mean != null).map((x) => (
               <button
                 key={x.id}
                 title={`${x.from_date}: ${x.ndvi_mean ?? "sin datos"} (${x.quality})`}
+                aria-label={`${x.from_date}: NDVI ${Number(x.ndvi_mean).toFixed(3)}`}
+                aria-pressed={observation?.id === x.id}
                 onClick={() => setSelected(x.id)}
                 style={{
                   height: `${Math.max(4, (Number(x.ndvi_mean) + 1) * 65)}px`,
-                  opacity: x.quality === "good" ? 1 : 0.5,
+                  opacity: x.quality === "valid" ? 1 : 0.5,
                 }}
               >
                 <span>{x.from_date?.slice(5)}</span>
@@ -1349,8 +1366,7 @@ function Ndvi({
             ))}
           </div>
           <p>
-            Solo comparar observaciones con cobertura válida ≥70 %. Las ventanas
-            pueden incluir mosaicos de varias adquisiciones.
+            La proporción de píxeles válidos solo considera las zonas con datos de origen; no demuestra que toda la parcela esté cubierta. Las ventanas pueden incluir mosaicos de varias adquisiciones.
           </p>
         </>
       )}
@@ -1368,6 +1384,7 @@ function Ndvi({
             : undefined
         }
       />
+      {observation?.ndvi_raster_url && observation.bounds && <div className="ndvi-legend" aria-label="Leyenda del mapa NDVI"><strong>Escala NDVI</strong><div className="ndvi-legend-gradient"/><div className="ndvi-legend-labels"><span>≤ −0,2</span><span>0,3</span><span>≥ 0,8</span></div><p>Valores relativos de vegetación: los colores muestran variaciones, no identifican la causa. Las zonas transparentes no tienen píxeles válidos.</p></div>}
       {observation && !observation.ndvi_raster_url && (
         <p>
           Mapa raster no disponible para esta observación; se muestra el
