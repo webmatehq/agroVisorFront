@@ -31,3 +31,5 @@ button:not(.nav-item):not(.segmented button):not(.icon-btn):not(.text-button){bo
 .ndvi-histogram-row{grid-template-columns:90px minmax(80px,1fr) minmax(150px,auto)}@media(max-width:500px){.ndvi-histogram-row{grid-template-columns:70px minmax(40px,1fr) minmax(120px,auto)}}
 .ndvi-request{margin:16px 0}.ndvi-request details{max-width:620px;margin-bottom:12px}.ndvi-request summary{cursor:pointer;color:var(--forest);font-weight:600}.ndvi-request details p{margin:10px 0;color:var(--muted)}.ndvi-request-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}@media(max-width:500px){.ndvi-request-dates{grid-template-columns:1fr}}
 .auth .auth-success{margin:0;padding:12px 14px;border:1px solid #cfe4cb;border-radius:6px;background:#edf5e9;color:#23563b}.auth .error{margin:0}
+.parcel-vertex { background:#c5ed8c; border:3px solid #fff; border-radius:50%; box-shadow:0 1px 6px #000a; cursor:grab; }
+.parcel-midpoint { background:#fff; color:#113e32; border:2px solid #113e32; border-radius:50%; box-shadow:0 1px 5px #0009; font:bold 16px/16px sans-serif; text-align:center; cursor:grab; }
