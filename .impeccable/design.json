@@ -1,0 +1,809 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T19:57:37.321Z",
+  "title": "Design System: SurcoVisor",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(99.0% 0.003 128.5)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262726",
+          "#444544",
+          "#656665",
+          "#888988",
+          "#adaeac",
+          "#d1d1d0",
+          "#eeeeee"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Soft Paper",
+        "canonical": "oklch(96.4% 0.005 145.5)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252725",
+          "#434643",
+          "#646764",
+          "#878a87",
+          "#acafac",
+          "#d0d1d0",
+          "#eeeeee"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#454545",
+          "#666666",
+          "#898989",
+          "#aeaeae",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Field Green",
+        "canonical": "oklch(32.9% 0.053 172.0)",
+        "tonalRamp": [
+          "#070c0b",
+          "#152c25",
+          "#234e42",
+          "#457063",
+          "#689485",
+          "#91b8aa",
+          "#c1d7cf",
+          "#e9f1ee"
+        ]
+      },
+      "ink-hover": {
+        "role": "primary",
+        "displayName": "Night Field",
+        "canonical": "oklch(26.6% 0.042 171.9)",
+        "tonalRamp": [
+          "#080c0b",
+          "#1a2b25",
+          "#2c4c42",
+          "#4d6e63",
+          "#709286",
+          "#97b6ab",
+          "#c4d6cf",
+          "#eaf0ee"
+        ]
+      },
+      "heading": {
+        "role": "primary",
+        "displayName": "Heading Green-Black",
+        "canonical": "oklch(22.1% 0.027 170.2)",
+        "tonalRamp": [
+          "#090c0b",
+          "#1f2925",
+          "#374a43",
+          "#576b64",
+          "#7a8f87",
+          "#a0b3ac",
+          "#c9d4d0",
+          "#ebefee"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Body Ink",
+        "canonical": "oklch(36.7% 0.023 170.1)",
+        "tonalRamp": [
+          "#0a0c0b",
+          "#202925",
+          "#394943",
+          "#5a6b64",
+          "#7c8e87",
+          "#a2b2ac",
+          "#cad3d0",
+          "#ecefee"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Quiet Ink",
+        "canonical": "oklch(51.4% 0.019 167.9)",
+        "tonalRamp": [
+          "#0a0c0b",
+          "#212825",
+          "#3b4943",
+          "#5c6a64",
+          "#7e8d87",
+          "#a4b2ac",
+          "#cbd3d0",
+          "#ecefee"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(91.6% 0.008 157.1)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252725",
+          "#424643",
+          "#626864",
+          "#858b87",
+          "#aaafac",
+          "#cfd2d0",
+          "#eeefee"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "rgba(13, 31, 25, .1)",
+        "tonalRamp": [
+          "rgba(13,31,25,.04)",
+          "rgba(13,31,25,.06)",
+          "rgba(13,31,25,.1)",
+          "rgba(13,31,25,.14)",
+          "rgba(13,31,25,.2)",
+          "rgba(13,31,25,.3)",
+          "rgba(13,31,25,.45)",
+          "rgba(13,31,25,.6)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Line Strong",
+        "canonical": "rgba(13, 31, 25, .2)",
+        "tonalRamp": [
+          "rgba(13,31,25,.04)",
+          "rgba(13,31,25,.06)",
+          "rgba(13,31,25,.1)",
+          "rgba(13,31,25,.14)",
+          "rgba(13,31,25,.2)",
+          "rgba(13,31,25,.3)",
+          "rgba(13,31,25,.45)",
+          "rgba(13,31,25,.6)"
+        ]
+      },
+      "ref": {
+        "role": "secondary",
+        "displayName": "Leaf Link Green",
+        "canonical": "oklch(52.9% 0.119 155.1)",
+        "tonalRamp": [
+          "#050e07",
+          "#003017",
+          "#02532d",
+          "#147947",
+          "#439e69",
+          "#75c291",
+          "#b4ddc1",
+          "#e4f3e8"
+        ]
+      },
+      "ref-deep": {
+        "role": "secondary",
+        "displayName": "Deep Leaf",
+        "canonical": "oklch(43.1% 0.095 155.7)",
+        "tonalRamp": [
+          "#060d08",
+          "#092e1a",
+          "#01532e",
+          "#31764e",
+          "#569a71",
+          "#82be98",
+          "#badbc4",
+          "#e6f2ea"
+        ]
+      },
+      "ref-light": {
+        "role": "secondary",
+        "displayName": "Mint",
+        "canonical": "oklch(83.2% 0.122 157.1)",
+        "tonalRamp": [
+          "#040e08",
+          "#012f1a",
+          "#015330",
+          "#037a49",
+          "#3b9f6b",
+          "#70c293",
+          "#b1ddc2",
+          "#e3f3e9"
+        ]
+      },
+      "ref-tint": {
+        "role": "secondary",
+        "displayName": "Leaf Wash",
+        "canonical": "oklch(95.7% 0.024 159.1)",
+        "tonalRamp": [
+          "#0a0c0a",
+          "#212924",
+          "#3a4940",
+          "#5b6a61",
+          "#7d8e84",
+          "#a3b2a9",
+          "#cbd3ce",
+          "#ecefed"
+        ]
+      },
+      "leaf": {
+        "role": "secondary",
+        "displayName": "Fresh Leaf",
+        "canonical": "oklch(75.8% 0.173 153.2)",
+        "tonalRamp": [
+          "#020f06",
+          "#003015",
+          "#02542a",
+          "#057a41",
+          "#02a458",
+          "#53c97f",
+          "#a6e2b7",
+          "#e0f5e5"
+        ]
+      },
+      "crop": {
+        "role": "tertiary",
+        "displayName": "Crop Slate",
+        "canonical": "oklch(48.2% 0.027 246.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#20272e",
+          "#394753",
+          "#5a6875",
+          "#7c8b99",
+          "#a2b0bd",
+          "#cad2d9",
+          "#eceff1"
+        ]
+      },
+      "crop-deep": {
+        "role": "tertiary",
+        "displayName": "Crop Deep",
+        "canonical": "oklch(39.2% 0.024 248.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#21272d",
+          "#3b4651",
+          "#5c6873",
+          "#7e8b97",
+          "#a4afbb",
+          "#cbd2d8",
+          "#eceff1"
+        ]
+      },
+      "crop-tint": {
+        "role": "tertiary",
+        "displayName": "Slate Wash",
+        "canonical": "oklch(95.7% 0.005 247.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252728",
+          "#434548",
+          "#646669",
+          "#87898c",
+          "#acaeb1",
+          "#d0d1d2",
+          "#eeeeef"
+        ]
+      },
+      "on-ink-2": {
+        "role": "neutral",
+        "displayName": "Mist on Green",
+        "canonical": "oklch(86.4% 0.017 162.7)",
+        "tonalRamp": [
+          "#0a0c0b",
+          "#222825",
+          "#3d4842",
+          "#5e6963",
+          "#808d86",
+          "#a6b1ab",
+          "#ccd3cf",
+          "#edefee"
+        ]
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Danger Red",
+        "canonical": "oklch(46.5% 0.151 17.9)",
+        "tonalRamp": [
+          "#150707",
+          "#490c15",
+          "#830724",
+          "#ab3744",
+          "#d55d66",
+          "#f6898e",
+          "#febebf",
+          "#ffe8e8"
+        ]
+      },
+      "danger-tint": {
+        "role": "error",
+        "displayName": "Danger Wash",
+        "canonical": "oklch(93.4% 0.021 13.9)",
+        "tonalRamp": [
+          "#0d0b0b",
+          "#2c2425",
+          "#504142",
+          "#726162",
+          "#958485",
+          "#b9a9aa",
+          "#d8cecf",
+          "#f1edee"
+        ]
+      },
+      "ndvi-low": {
+        "role": "data",
+        "displayName": "NDVI Low (red)",
+        "canonical": "oklch(46.6% 0.175 13.4)",
+        "tonalRamp": [
+          "#160608",
+          "#4d0317",
+          "#83022c",
+          "#b32848",
+          "#de526a",
+          "#ff8191",
+          "#febdc3",
+          "#ffe8ea"
+        ]
+      },
+      "ndvi-mid-low": {
+        "role": "data",
+        "displayName": "NDVI Mid-Low (amber)",
+        "canonical": "oklch(78.8% 0.167 67.8)",
+        "tonalRamp": [
+          "#130901",
+          "#392000",
+          "#623b01",
+          "#8f5802",
+          "#bf7605",
+          "#ea9a34",
+          "#f5c797",
+          "#fcebda"
+        ]
+      },
+      "ndvi-mid": {
+        "role": "data",
+        "displayName": "NDVI Mid (lime)",
+        "canonical": "oklch(89.2% 0.217 122.1)",
+        "tonalRamp": [
+          "#090d00",
+          "#212b01",
+          "#3d4c00",
+          "#5b7003",
+          "#7a9602",
+          "#9bbf04",
+          "#c5dc8d",
+          "#eaf3d7"
+        ]
+      },
+      "ndvi-mid-high": {
+        "role": "data",
+        "displayName": "NDVI Mid-High (teal)",
+        "canonical": "oklch(70.4% 0.148 164.8)",
+        "tonalRamp": [
+          "#020f08",
+          "#012f1f",
+          "#04523a",
+          "#047956",
+          "#02a274",
+          "#4cc899",
+          "#a4e1c5",
+          "#dff4ea"
+        ]
+      },
+      "ndvi-high": {
+        "role": "data",
+        "displayName": "NDVI High (deep green)",
+        "canonical": "oklch(49.1% 0.106 163.0)",
+        "tonalRamp": [
+          "#050e09",
+          "#012f1e",
+          "#005338",
+          "#0f7954",
+          "#419d76",
+          "#74c19d",
+          "#b3dcc7",
+          "#e4f3eb"
+        ]
+      },
+      "chart-temperature": {
+        "role": "data",
+        "displayName": "Temperature Line",
+        "canonical": "oklch(45.5% 0.078 160.6)",
+        "tonalRamp": [
+          "#060d09",
+          "#0e2d1f",
+          "#125237",
+          "#397457",
+          "#5d9879",
+          "#88bca0",
+          "#bcd9c9",
+          "#e7f1eb"
+        ]
+      },
+      "chart-rain": {
+        "role": "data",
+        "displayName": "Rain Bar",
+        "canonical": "oklch(67.3% 0.066 226.7)",
+        "tonalRamp": [
+          "#060c0f",
+          "#0e2a35",
+          "#134c60",
+          "#386e83",
+          "#5c92a8",
+          "#87b6cb",
+          "#bcd6e2",
+          "#e7f0f5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only."
+      },
+      "display-mobile": {
+        "displayName": "Display (phone)",
+        "purpose": "Hero headline under 720px."
+      },
+      "stat": {
+        "displayName": "Stat",
+        "purpose": "Story figures (+7 años, +7.000 ha), Field Green, tabular."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Landing section titles."
+      },
+      "headline-auth": {
+        "displayName": "Headline (auth)",
+        "purpose": "Auth page title."
+      },
+      "headline-hub": {
+        "displayName": "Headline (hub)",
+        "purpose": "Module hub title."
+      },
+      "numeral-lg": {
+        "displayName": "Large numeral",
+        "purpose": "Current temperature reading in the weather demo."
+      },
+      "title-xl": {
+        "displayName": "Title XL",
+        "purpose": "Door headings."
+      },
+      "title-app": {
+        "displayName": "App title",
+        "purpose": "App page titles."
+      },
+      "title-lg": {
+        "displayName": "Title L",
+        "purpose": "Place (city) names."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Bento tile and contact card headings."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Phone numbers, demo metrics, stat values."
+      },
+      "title-md": {
+        "displayName": "Title M",
+        "purpose": "Auth form heading, app brand."
+      },
+      "title-sm": {
+        "displayName": "Title S",
+        "purpose": "Feature trio headings, story lead paragraph."
+      },
+      "title-xs": {
+        "displayName": "Title XS",
+        "purpose": "Landing wordmark, module card headings."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Hero subcopy, Quiet Ink, max 60ch."
+      },
+      "body-strong": {
+        "displayName": "Strong caption",
+        "purpose": "Emphasised captions and day values inside demos."
+      },
+      "body-lg": {
+        "displayName": "Body L",
+        "purpose": "Section intros and story copy."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Tile, card and door copy; large buttons."
+      },
+      "body-sm": {
+        "displayName": "Body S",
+        "purpose": "Base text, lists, nav links, default buttons."
+      },
+      "ui": {
+        "displayName": "UI",
+        "purpose": "Small buttons, hints, channel labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Captions, media badges, footer labels, hero note."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Pills, form labels (uppercase 0.08em in auth), chart legends."
+      },
+      "label-sm": {
+        "displayName": "Small label",
+        "purpose": "Example tags, stat labels, table heads."
+      },
+      "label-micro": {
+        "displayName": "Micro label",
+        "purpose": "Uppercase field labels inside the miniature product window."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px rgba(13, 31, 25, .06), 0 2px 8px rgba(13, 31, 25, .04)",
+        "purpose": "Resting tiles, contact cards, app cards, map captions."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 24px 60px -24px rgba(13, 31, 25, .28), 0 8px 24px -12px rgba(13, 31, 25, .12)",
+        "purpose": "Lifted product pieces: product window, floating cards, door screenshot, auth card, module-card hover."
+      },
+      {
+        "name": "window-halo",
+        "value": "0 0 0 6px rgba(255, 255, 255, .6)",
+        "purpose": "Soft white ring added around the product window."
+      },
+      {
+        "name": "primary-glow",
+        "value": "0 1px 0 rgba(255,255,255,.15) inset, 0 6px 16px -6px rgba(17,62,50,.55)",
+        "purpose": "Primary pill buttons only."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px #e4f6eb",
+        "purpose": "Focused inputs, with a Leaf Link Green border."
+      },
+      {
+        "name": "hero-glow",
+        "value": "radial-gradient(640px 360px at 50% 30%, rgba(60, 207, 122, .16), transparent 70%), radial-gradient(900px 500px at 50% 70%, rgba(17, 62, 50, .08), transparent 70%)",
+        "purpose": "Atmospheric background behind the hero; the only use of Fresh Leaf."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.23, 1, .32, 1)",
+        "purpose": "Default curve: entrances, presses, lifts, zooms."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(.77, 0, .175, 1)",
+        "purpose": "Declared for on-screen movement between states."
+      },
+      {
+        "name": "rise-on-load",
+        "value": "translateY(28px) scale(.985) → none, 0.9s ease-out, 0.1s delay",
+        "purpose": "Product window entrance, once; static under reduced motion."
+      },
+      {
+        "name": "rise-follow",
+        "value": "0.8s ease-out at 0.3s and 0.38s delay",
+        "purpose": "Floating cards follow the window 80ms apart."
+      },
+      {
+        "name": "press",
+        "value": "scale(.97), 0.16s ease-out",
+        "purpose": "Button :active feedback."
+      },
+      {
+        "name": "state",
+        "value": "0.2s ease (0.15s in the app)",
+        "purpose": "Colour, border and shadow changes on hover."
+      },
+      {
+        "name": "lift",
+        "value": "translateY(-2px) 0.2s (cards), translateY(-6px) 0.5s (door screenshot)",
+        "purpose": "Hover lift on fine pointers only."
+      },
+      {
+        "name": "media-zoom",
+        "value": "scale(1.03), 0.6s ease-out",
+        "purpose": "Gallery media hover on fine pointers only."
+      },
+      {
+        "name": "dialog",
+        "value": "opacity + scale(.97) via @starting-style, 0.22s ease-out",
+        "purpose": "Image and video zoom dialog."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "window-tuck",
+        "value": "1180px"
+      },
+      {
+        "name": "hub-two-up",
+        "value": "1100px"
+      },
+      {
+        "name": "tablet",
+        "value": "1024px"
+      },
+      {
+        "name": "gutter",
+        "value": "820px"
+      },
+      {
+        "name": "phone",
+        "value": "720px"
+      },
+      {
+        "name": "hub-one-up",
+        "value": "700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The platform action: brand green pill with a soft green glow.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Crear cuenta <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 15px; font-weight: 650; letter-spacing: -0.005em; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .16s cubic-bezier(.23, 1, .32, 1); } .ds-btn:active { transform: scale(.97); } .ds-btn:focus-visible { outline: 2px solid var(--ref, #1d7f4c); outline-offset: 3px; } .ds-btn-primary { background: var(--ink, #113e32); color: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 6px 16px -6px rgba(17,62,50,.55); } .ds-btn-primary:hover { background: #0b2c23; }"
+    },
+    {
+      "name": "Dark Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "The drone-service action, paired at equal size with the primary.",
+      "html": "<button class=\"ds-btn ds-btn-dark\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"5.5\" cy=\"5.5\" r=\"2.5\"/><circle cx=\"18.5\" cy=\"5.5\" r=\"2.5\"/><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"/><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"/><path d=\"M7.5 7.5l2.5 2.5M16.5 7.5 14 10M7.5 16.5l2.5-2.5M16.5 16.5 14 14\"/><rect x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\" rx=\"1\"/></svg>Pedir trabajo con drones</button>",
+      "css": ".ds-btn { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 15px; font-weight: 650; letter-spacing: -0.005em; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .16s cubic-bezier(.23, 1, .32, 1); } .ds-btn:active { transform: scale(.97); } .ds-btn:focus-visible { outline: 2px solid var(--ref, #1d7f4c); outline-offset: 3px; } .ds-btn-dark { background: var(--heading, #0d1f19); color: #fff; } .ds-btn-dark:hover { background: #000; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet secondary action on light ground (nav \"Entrar\").",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Entrar</button>",
+      "css": ".ds-btn { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 15px; font-weight: 650; letter-spacing: -0.005em; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .16s cubic-bezier(.23, 1, .32, 1); } .ds-btn:active { transform: scale(.97); } .ds-btn:focus-visible { outline: 2px solid var(--ref, #1d7f4c); outline-offset: 3px; } .ds-btn-ghost { background: transparent; color: var(--heading, #0d1f19); border-color: rgba(13,31,25,.2); } .ds-btn-ghost:hover { background: var(--paper-2, #f1f4f1); }"
+    },
+    {
+      "name": "Light Button",
+      "kind": "button",
+      "refersTo": "button-light",
+      "description": "White pill for actions on the dark green field.",
+      "html": "<div style=\"background:#113e32;padding:24px;border-radius:16px\"><button class=\"ds-btn ds-btn-light\">Ver contacto del servicio</button></div>",
+      "css": ".ds-btn { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 15px; font-weight: 650; letter-spacing: -0.005em; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .16s cubic-bezier(.23, 1, .32, 1); } .ds-btn:active { transform: scale(.97); } .ds-btn:focus-visible { outline: 2px solid var(--ref, #1d7f4c); outline-offset: 3px; } .ds-btn-light { background: #fff; color: var(--heading, #0d1f19); } .ds-btn-light:hover { background: var(--paper-2, #f1f4f1); }"
+    },
+    {
+      "name": "Pills and Example Tag",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "Leaf pill names an audience; slate tag marks sample data.",
+      "html": "<div class=\"ds-chips\"><span class=\"ds-pill\">Plataforma digital</span><span class=\"ds-tag\">Datos de ejemplo</span></div>",
+      "css": ".ds-chips { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: flex; gap: 10px; align-items: center; } .ds-pill { font-size: 12px; font-weight: 650; color: var(--ref, #1d7f4c); background: var(--ref-tint, #e4f6eb); padding: 4px 10px; border-radius: 999px; } .ds-tag { font-size: 11px; font-weight: 650; color: var(--crop, #52606d); background: var(--crop-tint, #eef1f4); padding: 3px 10px; border-radius: 999px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Auth and app input with leaf focus halo.",
+      "html": "<label class=\"ds-field\"><span>Correo electrónico</span><input class=\"ds-input\" type=\"email\" placeholder=\"tu@correo.com\"></label>",
+      "css": ".ds-field { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: grid; gap: 8px; max-width: 320px; } .ds-field span { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #33433d; } .ds-input { font: inherit; font-size: 16px; font-weight: 500; min-height: 46px; padding: 0 14px; background: #fff; color: #113e32; border: 1.5px solid rgba(13,31,25,.2); border-radius: 10px; transition: border-color .15s cubic-bezier(.23,1,.32,1), box-shadow .15s cubic-bezier(.23,1,.32,1); } .ds-input::placeholder { color: #5d6b65; } .ds-input:focus { outline: none; border-color: #1d7f4c; box-shadow: 0 0 0 3px #e4f6eb; }"
+    },
+    {
+      "name": "Landing Nav",
+      "kind": "nav",
+      "refersTo": "nav-bar",
+      "description": "Sticky blurred bar: brand, centred pill links, ghost and primary actions.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-brand\" href=\"#\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 1.5 22.5 12 12 22.5 1.5 12Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M12 7.2 16.8 12 12 16.8 7.2 12Z\" fill=\"currentColor\"/></svg>SurcoVisor</a><div class=\"ds-nav-links\"><a href=\"#\">Soluciones</a><a href=\"#\">Funcionalidades</a><a href=\"#\">Contacto</a></div><div class=\"ds-nav-actions\"><button class=\"ds-nbtn ds-nbtn-ghost\">Entrar</button><button class=\"ds-nbtn ds-nbtn-primary\">Crear cuenta</button></div></nav>",
+      "css": ".ds-nav { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; gap: 24px; height: 68px; padding: 0 24px; background: color-mix(in oklab, #fbfcfa 82%, transparent); backdrop-filter: saturate(1.5) blur(14px); border-bottom: 1px solid rgba(13,31,25,.1); } .ds-nav-brand { display: inline-flex; align-items: center; gap: 10px; color: #0d1f19; text-decoration: none; font-weight: 750; font-size: 20px; letter-spacing: -0.02em; } .ds-nav-brand svg { color: #113e32; } .ds-nav-links { display: flex; gap: 4px; margin: 0 auto; } .ds-nav-links a { color: #33433d; text-decoration: none; font-size: 15px; font-weight: 500; padding: 8px 14px; border-radius: 999px; transition: background-color .2s ease, color .2s ease; } .ds-nav-links a:hover { color: #0d1f19; background: #f1f4f1; } .ds-nav-links a:focus-visible, .ds-nbtn:focus-visible { outline: 2px solid #1d7f4c; outline-offset: 3px; } .ds-nav-actions { display: flex; gap: 8px; } .ds-nbtn { font: inherit; min-height: 38px; padding: 0 16px; font-size: 14px; font-weight: 650; border-radius: 999px; border: 1px solid transparent; cursor: pointer; transition: background-color .2s ease; } .ds-nbtn-ghost { background: transparent; color: #0d1f19; border-color: rgba(13,31,25,.2); } .ds-nbtn-ghost:hover { background: #f1f4f1; } .ds-nbtn-primary { background: #113e32; color: #fff; } .ds-nbtn-primary:hover { background: #0b2c23; }"
+    },
+    {
+      "name": "Bento Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "White tile with icon tile, title, copy, check list and a tagged demo panel.",
+      "html": "<article class=\"ds-tile\"><span class=\"ds-icon\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 17.5h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 8 4.8 4.8 0 0 0 7 17.5Z\"/><path d=\"M9 20.5l-.8 1.5M13 20.5l-.8 1.5M17 20.5l-.8 1.5\"/></svg></span><h3>Meteorología de tu finca</h3><p>Consulta las previsiones de temperatura, lluvia y viento.</p><ul><li>Previsión vinculada a la finca</li><li>Temperatura y precipitación por día</li></ul><div class=\"ds-demo\"><span class=\"ds-demo-tag\">Datos de ejemplo</span><strong>25 °C</strong></div></article>",
+      "css": ".ds-tile { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: grid; gap: 14px; max-width: 420px; padding: 32px; background: #fff; border: 1px solid #dfe5e1; border-radius: 20px; box-shadow: 0 1px 2px rgba(13,31,25,.06), 0 2px 8px rgba(13,31,25,.04); color: #33433d; } .ds-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: #e4f6eb; color: #1d7f4c; } .ds-tile h3 { margin: 0; color: #0d1f19; font-size: 26px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.2; } .ds-tile p { margin: 0; font-size: 16px; line-height: 1.6; } .ds-tile ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; } .ds-tile li { position: relative; padding-left: 28px; font-size: 15px; color: #0d1f19; } .ds-tile li::before { content: \"\"; position: absolute; left: 0; top: .2em; width: 18px; height: 18px; border-radius: 50%; background: #e4f6eb url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4 7.8 12 13 6.5' fill='none' stroke='%231d7f4c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / 18px no-repeat; } .ds-demo { position: relative; margin-top: 14px; padding: 22px; border: 1px solid #dfe5e1; border-radius: 14px; background: #fbfcfa; } .ds-demo strong { font-size: 52px; font-weight: 800; line-height: 1; color: #113e32; font-variant-numeric: tabular-nums; } .ds-demo-tag { position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 650; color: #52606d; background: #eef1f4; padding: 3px 10px; border-radius: 999px; }"
+    },
+    {
+      "name": "Floating Data Card",
+      "kind": "custom",
+      "refersTo": "card-app",
+      "description": "The product window's floating card: lifted shadow, rises on load.",
+      "html": "<div class=\"ds-float\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 17.5h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 8 4.8 4.8 0 0 0 7 17.5Z\"/><path d=\"M9 20.5l-.8 1.5M13 20.5l-.8 1.5M17 20.5l-.8 1.5\"/></svg><div><span>Hoy · 12:00</span><strong>25 °C</strong><em>Lluvia 2,0 mm · viento 12 km/h</em></div></div>",
+      "css": ".ds-float { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: inline-flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: rgba(255,255,255,.96); border: 1px solid #dfe5e1; border-radius: 14px; box-shadow: 0 24px 60px -24px rgba(13,31,25,.28), 0 8px 24px -12px rgba(13,31,25,.12); animation: ds-rise .8s cubic-bezier(.23,1,.32,1) .3s backwards; } .ds-float svg { color: #113e32; margin-top: 2px; flex: none; } .ds-float div { display: grid; gap: 1px; } .ds-float span { font-size: 11px; font-weight: 650; color: #5d6b65; } .ds-float strong { font-size: 17px; font-weight: 750; color: #0d1f19; letter-spacing: -0.01em; } .ds-float em { font-style: normal; font-size: 12px; color: #5d6b65; } @keyframes ds-rise { from { transform: translateY(28px) scale(.985); } } @media (prefers-reduced-motion: reduce) { .ds-float { animation: none; } }"
+    },
+    {
+      "name": "Drone Door",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "The one dark field: brand green door with mint ticks and a light pill.",
+      "html": "<article class=\"ds-door\"><h3>Servicios agrícolas con drones</h3><span class=\"ds-door-pill\">Servicio profesional</span><p>Nos desplazamos a tu explotación y realizamos los trabajos que necesitas.</p><ul><li>Fumigación y tratamientos</li><li>Siembra aérea</li></ul><button class=\"ds-door-btn\">Ver contacto del servicio</button></article>",
+      "css": ".ds-door { font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif; display: grid; gap: 14px; max-width: 440px; padding: 40px; border-radius: 24px; background: linear-gradient(180deg, rgba(17,62,50,.97), #113e32); border: 1px solid #113e32; } .ds-door h3 { margin: 0; color: #fff; font-size: 32px; font-weight: 750; letter-spacing: -0.025em; line-height: 1.2; } .ds-door-pill { justify-self: start; font-size: 12px; font-weight: 650; color: #fff; background: rgba(255,255,255,.16); padding: 4px 10px; border-radius: 999px; } .ds-door p, .ds-door li { margin: 0; color: #d7e3dd; font-size: 16px; line-height: 1.6; } .ds-door ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; } .ds-door li { position: relative; padding-left: 28px; font-size: 15px; } .ds-door li::before { content: \"\"; position: absolute; left: 0; top: .2em; width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,.14) url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4 7.8 12 13 6.5' fill='none' stroke='%237fe0a8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") center / 18px no-repeat; } .ds-door-btn { justify-self: start; margin-top: 8px; font: inherit; min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #fff; color: #0d1f19; font-size: 15px; font-weight: 650; cursor: pointer; transition: background-color .2s ease, transform .16s cubic-bezier(.23,1,.32,1); } .ds-door-btn:hover { background: #f1f4f1; } .ds-door-btn:active { transform: scale(.97); } .ds-door-btn:focus-visible { outline: 2px solid #7fe0a8; outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Clear Field",
+    "overview": "SurcoVisor looks like a modern software product, not a themed document. The page is near-white and quiet, the type is one confident grotesque, and the real product and real fieldwork carry the story: a working app window on a real NDVI parcel, live demos of indices, weather and the field notebook, and full-bleed drone footage. Craft is measured against Linear and Stripe: tight display tracking, generous whitespace, hairline borders, soft long shadows, pill buttons, and motion that settles rather than performs.\n\nDensity is calm on the landing and practical in the app. Brand green is the identity and the primary action; a near-black heading green carries the second action and the headings; one dark green field per view (the drone door, the app sidebar) gives the page weight. Colour beyond the greens appears only to encode data: the NDVI ramp and the weather chart series. Example data is always labelled as such, in a quiet slate.\n\nThe landing (Persuade) and the app, module hub and auth (Operate) share one token set in `theme.css`. This system replaced two rejected themed worlds; it keeps none of their language.",
+    "keyCharacteristics": [
+      "Near-white ground, white surfaces, hairline borders, soft long shadows.",
+      "Hanken Grotesk for every word, display set tight (-0.035em to -0.045em).",
+      "Pill buttons in pairs of equal weight: brand green and near-black.",
+      "Real product UI and real field media as the hero, never illustration.",
+      "Concentric rounded corners, larger on outer containers.",
+      "One rise-and-settle entrance; hover lifts of a few pixels; nothing loops except field video."
+    ],
+    "rules": [
+      {
+        "name": "The Data-Only Multicolour Rule",
+        "body": "Every colour outside the greens, slate, neutrals and danger encodes data: the NDVI ramp or a chart series. A multicolour gradient used as decoration is off-system.",
+        "section": "colors"
+      },
+      {
+        "name": "The Example Label Rule",
+        "body": "Any surface showing fabricated or sample data carries a Crop Slate \"Datos de ejemplo\" pill. Slate never marks an action or an owner.",
+        "section": "colors"
+      },
+      {
+        "name": "The Leaf Is Light Rule",
+        "body": "Fresh Leaf is a glow, not a colour you read. Links and active states use Leaf Link Green.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tight Display Rule",
+        "body": "Anything 26px and up is 750 weight with negative tracking (-0.02em at 26px down to -0.045em at the hero). Big type at default tracking reads unfinished.",
+        "section": "typography"
+      },
+      {
+        "name": "The Labels Label Data Rule",
+        "body": "Uppercase tracked text (0.08em) names a field, a column or a stat: form labels, table heads, stat labels, the window's context labels. It never sits above a heading as an eyebrow or kicker.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Numbers Rule",
+        "body": "Figures that compare or update (stats, phone numbers, metrics, tables, times) use tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lift Means Product Rule",
+        "body": "The long shadow belongs to product pieces that float (window, floating cards, screenshots) and to hover feedback. Resting content cards stay on the resting shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Soft Shadow Rule",
+        "body": "Shadows are diffuse, tinted with Heading Green-Black, and offset only downward. No hard, unblurred offset shadows.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Concentric Corner Rule",
+        "body": "A nested surface uses a smaller radius than its container; an outer container never has tighter corners than what it holds.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** let the real product (the app window, live demos, real NDVI renders) and real field media (drone photo and videos) lead every section.",
+      "**Do** pair the two actions as equal pills: Field Green primary for the platform, Heading Green-Black dark for drones, same size, side by side.",
+      "**Do** label every sample-data surface with the Crop Slate \"Datos de ejemplo\" tag.",
+      "**Do** set headings at 750 with negative tracking (-0.02em to -0.045em) and keep reading text at 400 with 1.5–1.7 line height.",
+      "**Do** give every container a 1px Hairline (#dfe5e1) and a radius from the concentric ladder (10 / 12 / 14 / 16 / 18 / 20 / 24px), pills at 999px.",
+      "**Do** keep motion to one load entrance (rise and settle, 0.9s, cubic-bezier(.23, 1, .32, 1)), press scale 0.97, and hover lifts of 2–6px, all disabled under reduced motion.",
+      "**Do** separate sections with 136px of space (96px on phones) rather than bands or rules."
+    ],
+    "donts": [
+      "**Don't** dress the site as a themed document: no flight-chart, cadastral-plan or survey-sheet language, linework, hatching or monospace lettering.",
+      "**Don't** use colour outside the greens, slate and neutrals except to encode data (the NDVI ramp, chart series).",
+      "**Don't** set Fresh Leaf (#3ccf7a) as text or a fill on light ground; it is the hero glow only.",
+      "**Don't** put uppercase tracked eyebrows or kickers above headings; uppercase labels name fields and stats only.",
+      "**Don't** use square corners or hard unblurred offset shadows on any surface.",
+      "**Don't** fabricate testimonials, client logos, pricing or press to fill a section."
+    ]
+  }
+}

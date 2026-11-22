@@ -9,7 +9,7 @@ export function ActivitiesPreview() {
   const [selected, setSelected] = useState(0);
   const activity = activities[selected];
   return <section className="activities-preview" aria-label="Cuaderno de campo de demostración">
-    <div className="activities-heading"><div><span>CUADERNO DE CAMPO</span><h3>Maíz</h3></div><span className="activities-season">Campaña 2026</span></div>
+    <div className="activities-heading"><div><h3>Maíz</h3><span>Cuaderno de campo</span></div><span className="activities-season">Campaña 2026</span></div>
     <div className="activities-summary"><div><strong>12,4 <small>ha</small></strong><span>Superficie</span></div><div><strong>2</strong><span>Labores completadas</span></div><div><strong>1</strong><span>Próxima actividad</span></div></div>
     <div className="activities-list-heading"><h4>Actividad de la parcela</h4><span>Noviembre</span></div>
     <div className="activities-list" role="group" aria-label="Selecciona una labor">

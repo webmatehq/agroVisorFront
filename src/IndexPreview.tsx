@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImageZoom } from './ImageZoom';
+import { Expand, Pause, Play } from './Icons';
 
 const categories = [
   { label: 'Malo', color: '#a4143c' },
@@ -11,7 +12,7 @@ const categories = [
 ];
 export function IndexPreview({ index }: { index: { id: string; name: string; ranges: string[]; percentages: number[] } }) {
   const imageUrl = `/media/indices/${index.id}-limpio.jpg`;
-  const map = <div className="ndvi-map-crop"><img src={imageUrl} alt={`Mapa de ${index.name} de la finca`}/></div>;
+  const map = <div className="ndvi-map-crop"><img src={imageUrl} alt={`Mapa de ${index.name} de una parcela de ejemplo`}/></div>;
   let cumulative = 0;
   const segments = categories.map((category, i) => {
     const start = cumulative;
@@ -46,7 +47,7 @@ export function IndexPreview({ index }: { index: { id: string; name: string; ran
     <div className="ndvi-stage">
       <div className="ndvi-slide" hidden={slide !== 0}>
         <ImageZoom src={imageUrl} alt={`Mapa ${index.name}`} zoomContent={map}>{map}</ImageZoom>
-        <div className="ndvi-map-caption"><span>{index.name} · Tu finca</span><span>Pulsa para ampliar ⤢</span></div>
+        <div className="ndvi-map-caption"><span>{index.name} · Parcela de ejemplo</span><span><Expand size={13} /> Pulsa para ampliar</span></div>
         <div className="ndvi-color-key">{categories.map(category => <span key={category.label}><i style={{background:category.color}}/>{category.label}</span>)}</div>
       </div>
       <div className="ndvi-slide ndvi-summary" hidden={slide !== 1}>
@@ -66,8 +67,8 @@ export function IndexPreview({ index }: { index: { id: string; name: string; ran
       </div>
     </div>
     <div className="ndvi-playback">
-      <span aria-hidden="true">{slide === 0 ? '● ○' : '○ ●'}</span>
-      <button type="button" onClick={() => setPlaying(value => !value)} aria-label={playing ? 'Pausar cambio automático' : 'Reproducir cambio automático'}>{playing ? 'Ⅱ' : '▷'}</button>
+      <span className="ndvi-dots" aria-hidden="true"><i className={slide === 0 ? 'on' : ''}/><i className={slide === 1 ? 'on' : ''}/></span>
+      <button type="button" onClick={() => setPlaying(value => !value)} aria-label={playing ? 'Pausar cambio automático' : 'Reproducir cambio automático'}>{playing ? <Pause size={16} /> : <Play size={16} />}</button>
     </div>
     
   </div>;

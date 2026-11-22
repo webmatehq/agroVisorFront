@@ -25,7 +25,7 @@ export function WeatherPreview() {
   const point = forecast[selected];
   return <section className="weather-preview" aria-label="Previsión meteorológica de demostración">
     <div className="weather-preview-heading">
-      <div><span className="weather-preview-kicker">METEOROLOGÍA DE LA PARCELA</span><h3>Maíz</h3></div>
+      <div><h3>Maíz</h3><span className="weather-preview-kicker">Meteorología de la parcela</span></div>
       <span className="weather-preview-period">Hoy · cada 3 h</span>
     </div>
     <div className="weather-preview-reading">

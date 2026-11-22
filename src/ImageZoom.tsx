@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { Close } from './Icons';
 
 export function ImageZoom({ src, alt, children, className, zoomContent }: {
   src: string;
@@ -28,7 +29,7 @@ export function ImageZoom({ src, alt, children, className, zoomContent }: {
       <dialog ref={dialog} className="image-zoom-dialog" aria-label={alt}
         onCancel={() => setOpen(false)} onClose={() => setOpen(false)}
         onClick={event => { if (event.target === event.currentTarget) setOpen(false); }}>
-        <button type="button" className="image-zoom-close" aria-label="Cerrar vista ampliada" autoFocus onClick={() => setOpen(false)}>×</button>
+        <button type="button" className="image-zoom-close" aria-label="Cerrar vista ampliada" autoFocus onClick={() => setOpen(false)}><Close size={18} /></button>
         {zoomContent || <img src={src} alt={alt}/>}
       </dialog>, document.body)}
   </>;
